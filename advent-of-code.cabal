@@ -1,0 +1,51 @@
+cabal-version:      3.0
+name:               advent-of-code
+version:            2022.0.0.1
+-- synopsis:
+-- description:
+license:            AGPL-3.0-or-later
+license-file:       LICENSE
+author:             Mathijs Kwik
+maintainer:         mathijs@bluescreen303.nl
+
+build-type:         Simple
+extra-doc-files:    CHANGELOG.md
+
+-- Extra source files to be distributed with the package, such as examples, or a tutorial module.
+-- extra-source-files:
+
+common commons
+    ghc-options: -Wall
+    default-language: GHC2021
+    build-depends:
+        base ^>=4.17.0.0
+
+library
+    import:           commons
+
+    hs-source-dirs:   lib
+    exposed-modules:  MyLib
+    -- Modules included in this library but not exported.
+    -- other-modules:
+    -- LANGUAGE extensions used by modules in this package.
+    -- other-extensions:
+
+executable advent-of-code
+    import:           commons
+
+    hs-source-dirs:   app
+    main-is:          Main.hs
+
+    build-depends:
+        advent-of-code
+
+
+test-suite advent-of-code-test
+    import:           commons
+
+    hs-source-dirs:   test
+    type:             exitcode-stdio-1.0
+    main-is:          Main.hs
+
+    build-depends:
+        advent-of-code
