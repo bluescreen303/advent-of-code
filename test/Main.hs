@@ -14,3 +14,7 @@ main = hspec . parallel $ do
 
             it "calories should be 24000" $ \(_, calories) -> do
                 calories `shouldBe` 24000
+
+        describe "the secondary puzzle" . mapSubject Lib_2022_01.main2 $ do
+            it "calories should be 24000" $ \calories -> do
+                calories `shouldBe` 45000

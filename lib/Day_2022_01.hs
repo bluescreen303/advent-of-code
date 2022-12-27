@@ -1,6 +1,6 @@
 module Day_2022_01 where
 
-import Data.List (maximumBy)
+import Data.List (sortBy)
 import Data.Function (on)
 import Control.Arrow (second)
 
@@ -13,7 +13,17 @@ readGroups = withGroups $ map read
 withGroups :: (b -> c) -> [(d, b)] -> [(d, c)]
 withGroups = map . second
 
+sortedElves :: String -> [(Integer, Integer)]
+sortedElves = sortBy (flip compare `on` snd)
+            . withGroups (sum . map read)
+            . grouped
+
 main :: String -> (Integer, Integer)
-main = maximumBy (compare `on` snd)
-     . withGroups (sum . map read)
-     . grouped
+main = head
+     . sortedElves
+
+main2 :: String -> Integer
+main2 = sum
+      . map snd
+      . take 3
+      . sortedElves
