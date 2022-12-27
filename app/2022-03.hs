@@ -13,3 +13,6 @@ main = do
 
     let score = Lib.main contents
     printf "total priority is %d\n\n" score
+
+    let badgeScore = Lib.main2 contents
+    printf "total badgeScore priority is %d\n\n" badgeScore

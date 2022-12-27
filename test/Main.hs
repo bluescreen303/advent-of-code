@@ -37,7 +37,10 @@ main = hspec . parallel $ do
                 map Day_2022_03.priority "pLPvts" `shouldBe` [16, 38, 42, 22, 20, 19]
         describe "splitList" $ do
             it "should split a list in halves" $ \_ ->
-                Day_2022_03.splitList [1,2,3,4,5,6] `shouldBe` ([1,2,3], [4,5,6])
+                Day_2022_03.splitList @Int [1,2,3,4,5,6] `shouldBe` ([1,2,3], [4,5,6])
         describe "the main example" . mapSubject Day_2022_03.main $ do
             it "should calculate a sum of 157" $ \result ->
                 result `shouldBe` 157
+        describe "the second puzzle" . mapSubject Day_2022_03.main2 $ do
+            it "should calculate a sum of 70" $ \result ->
+                result `shouldBe` 70
