@@ -31,6 +31,7 @@ library
         Helpers
         Day_2022_01
         Day_2022_02
+        Day_2022_03
     -- Modules included in this library but not exported.
     -- other-modules:
     -- LANGUAGE extensions used by modules in this package.
@@ -54,6 +55,14 @@ executable 2022-02
     build-depends:
         advent-of-code
 
+executable 2022-03
+    import:           commons
+
+    hs-source-dirs:   app
+    main-is:          2022-03.hs
+
+    build-depends:
+        advent-of-code
 
 test-suite advent-of-code-test
     import:           commons
