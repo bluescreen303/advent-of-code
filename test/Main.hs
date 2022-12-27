@@ -4,8 +4,9 @@ import Test.Hspec
 import Paths_advent_of_code (getDataFileName)
 import qualified Day_2022_01
 import qualified Day_2022_02
-import qualified Day_2022_03
 import Day_2022_02 (OtherSide(..), OurSide(..))
+import qualified Day_2022_03
+import qualified Day_2022_04
 
 main :: IO ()
 main = hspec . parallel $ do
@@ -44,3 +45,17 @@ main = hspec . parallel $ do
         describe "the second puzzle" . mapSubject Day_2022_03.main2 $ do
             it "should calculate a sum of 70" $ \result ->
                 result `shouldBe` 70
+
+    describe "2022-04" . before (getDataFileName "2022-04-example.txt" >>= readFile) $ do
+        describe "the parser" . mapSubject Day_2022_04.doParse $ do
+            it "should parse ok" $ \result ->
+                result `shouldBe` Right [ ([2,3,4],[6,7,8])
+                                        , ([2,3],[4,5])
+                                        , ([5,6,7],[7,8,9])
+                                        , ([2,3,4,5,6,7,8],[3,4,5,6,7])
+                                        , ([6],[4,5,6])
+                                        , ([2,3,4,5,6],[4,5,6,7,8])
+                                        ]
+        describe "the main example" . mapSubject Day_2022_04.main $ do
+            it "should find 2 fully contained pairs" $ \result ->
+                result `shouldBe` Right 2
