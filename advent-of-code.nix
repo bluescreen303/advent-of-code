@@ -1,13 +1,14 @@
-{ mkDerivation, base, lib }:
+{ mkDerivation, base, hspec, lib }:
 mkDerivation {
   pname = "advent-of-code";
   version = "2022.0.0.1";
   src = ./.;
   isLibrary = true;
   isExecutable = true;
+  enableSeparateDataOutput = true;
   libraryHaskellDepends = [ base ];
   executableHaskellDepends = [ base ];
-  testHaskellDepends = [ base ];
+  testHaskellDepends = [ base hspec ];
   license = lib.licenses.agpl3Plus;
-  mainProgram = "advent-of-code";
+  mainProgram = "2022-01";
 }

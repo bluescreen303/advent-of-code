@@ -10,13 +10,16 @@ maintainer:         mathijs@bluescreen303.nl
 
 build-type:         Simple
 extra-doc-files:    CHANGELOG.md
+data-dir:           data/
+data-files:         *.txt
 
 -- Extra source files to be distributed with the package, such as examples, or a tutorial module.
 -- extra-source-files:
 
 common commons
-    ghc-options: -Wall
+    ghc-options:      -Wall
     default-language: GHC2021
+    other-modules:    Paths_advent_of_code
     build-depends:
         base ^>=4.17.0.0
 
@@ -24,17 +27,19 @@ library
     import:           commons
 
     hs-source-dirs:   lib
-    exposed-modules:  MyLib
+    exposed-modules:
+        Helpers
+        Day_2022_01
     -- Modules included in this library but not exported.
     -- other-modules:
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
 
-executable advent-of-code
+executable 2022-01
     import:           commons
 
     hs-source-dirs:   app
-    main-is:          Main.hs
+    main-is:          2022-01.hs
 
     build-depends:
         advent-of-code
@@ -48,4 +53,6 @@ test-suite advent-of-code-test
     main-is:          Main.hs
 
     build-depends:
-        advent-of-code
+        advent-of-code,
+        hspec ^>= 2.10.6
+
