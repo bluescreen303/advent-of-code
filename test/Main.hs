@@ -27,5 +27,5 @@ main = hspec . parallel $ do
                 guide `shouldBe` [(A, Y), (B, X), (C, Z)]
 
         describe "playing the parsed guide" . mapSubject (Day_2022_02.playGuide . Day_2022_02.parseStrategyGuide) $ do
-            it "should give a score of 15" $ \score ->
-                score `shouldBe` 15
+            it "should give a score of 12" $ \score ->
+                score `shouldBe` 12
