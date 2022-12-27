@@ -13,3 +13,7 @@ main = do
     case Lib.main contents of
         Left err -> error $ "parse error " ++ show err
         Right result -> printf "found %d pairs with full overlap\n\n" result
+
+    case Lib.main2 contents of
+        Left err -> error $ "parse error " ++ show err
+        Right result -> printf "found %d pairs with some overlap\n\n" result

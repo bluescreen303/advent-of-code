@@ -59,3 +59,6 @@ main = hspec . parallel $ do
         describe "the main example" . mapSubject Day_2022_04.main $ do
             it "should find 2 fully contained pairs" $ \result ->
                 result `shouldBe` Right 2
+        describe "the second puzzle" . mapSubject Day_2022_04.main2 $ do
+            it "should find 4 pairs with overlap" $ \result ->
+                result `shouldBe` Right 4

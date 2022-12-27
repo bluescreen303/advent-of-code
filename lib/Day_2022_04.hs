@@ -1,7 +1,7 @@
 module Day_2022_04 where
 
 import Data.Char (digitToInt)
-import Data.List (foldl', (\\))
+import Data.List (foldl', (\\), intersect)
 import Text.Parsec
 
 parser :: Stream s m Char => ParsecT s u m [([Int], [Int])]
@@ -14,6 +14,9 @@ fullyContains :: Eq a => [a] -> [a] -> Bool
 fullyContains xs ys = null (ys \\ xs)
                    || null (xs \\ ys)
 
+overlaps :: Eq a => [a] -> [a] -> Bool
+overlaps xs ys = not . null $ intersect xs ys
+
 doParse :: String -> Either ParseError [([Int], [Int])]
 doParse = parse parser ""
 
@@ -22,5 +25,7 @@ main = fmap go . doParse
     where go = length
              . filter (uncurry fullyContains)
 
-main2 :: String -> [([Int], [Int])]
-main2 = either (error . show) id . doParse
+main2 :: String -> Either ParseError Int
+main2 = fmap go . doParse
+    where go = length
+             . filter (uncurry overlaps)
