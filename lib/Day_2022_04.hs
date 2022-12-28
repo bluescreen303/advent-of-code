@@ -4,7 +4,9 @@ import Data.Char (digitToInt)
 import Data.List (foldl', (\\), intersect)
 import Text.Parsec
 
-parser :: Stream s m Char => ParsecT s u m [([Int], [Int])]
+type Parser = Parsec String ()
+
+parser :: Parser [([Int], [Int])]
 parser = line `sepEndBy` endOfLine <* eof
     where line = (,) <$> range positiveNatural <* char ',' <*> range positiveNatural
           range p = enumFromTo <$> p <* char '-' <*> p
