@@ -81,12 +81,12 @@ main = hspec . parallel $ do
                                    , [Just (Crate 'Z'),Just (Crate 'M'),Just (Crate 'P')]]
             describe "run" . mapSubject Day_2022_05.run $ do
                 it "should return the correct final state" $ \s ->
-                    s `shouldBe` Just (Stacks [ [Crate 'C']
-                                              , [Crate 'M']
-                                              , [Crate 'Z', Crate 'N', Crate 'D', Crate 'P']])
+                    s `shouldBe` Just (Stacks [ [Crate 'M']
+                                              , [Crate 'C']
+                                              , [Crate 'D', Crate 'N', Crate 'Z', Crate 'P']])
                 describe "top" . mapSubject (fmap Day_2022_05.top) $ do
                     it "should return the correct final state" $ \s ->
-                        s `shouldBe` Just "CMZ"
+                        s `shouldBe` Just "MCD"
         describe "with example input file" . before (getDataFileName "2022-05-example.txt" >>= readFile) $ do
             describe "show" . mapSubject (, show puzzle) $ do
                 it "should display the puzzle as in the example" $ \(contents, result) ->
@@ -96,4 +96,4 @@ main = hspec . parallel $ do
                     result `shouldBe` Right puzzle
             describe "main" . mapSubject Day_2022_05.main $ do
                 it "should produce the right result" $ \result ->
-                    result `shouldBe` Right (Just "CMZ")
+                    result `shouldBe` Right (Just "MCD")

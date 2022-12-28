@@ -44,20 +44,21 @@ instance Show Stacks where
                      . map (printf " %d ")
                      $ [1..(length xs)]
 
-grab :: Stacks -> Int -> Maybe (Stacks, Crate)
-grab (Stacks xs) n = case splitAt (n - 1) xs of
-    (before, (item:rest):after) -> Just (Stacks (before ++ rest : after), item)
-    _                           -> Nothing
+grab :: Stacks -> Int -> Int -> Maybe (Stacks, [Crate])
+grab (Stacks xs) n amount = case splitAt (n - 1) xs of
+    (before, this:after) -> let (items, rest) = splitAt amount this
+                            in Just (Stacks (before ++ rest : after), items)
+    _                    -> Nothing
 
-put :: Stacks -> Int -> Crate -> Maybe Stacks
-put (Stacks xs) n item = case splitAt (n - 1) xs of
-    (before, stack:after) -> Just (Stacks (before ++ (item : stack) : after))
+put :: Stacks -> Int -> [Crate] -> Maybe Stacks
+put (Stacks xs) n items = case splitAt (n - 1) xs of
+    (before, stack:after) -> Just (Stacks (before ++ (items ++ stack) : after))
     _                     -> Nothing
 
-moveOne :: Int -> Int -> Stacks -> Maybe Stacks
-moveOne from' to' s = do
-    (s', c) <- grab s from'
-    put s' to' c
+move :: Int -> Int -> Int -> Stacks -> Maybe Stacks
+move n from' to' s = do
+    (s', cs) <- grab s from' n
+    put s' to' cs
 
 data Move = Move { amount :: Int
                  , from   :: Int
@@ -69,7 +70,7 @@ instance Show Move where
     show m = printf "move %d from %d to %d" (amount m) (from m) (to m)
 
 apply :: Move -> Stacks -> Maybe Stacks
-apply (Move a f t) s = foldl' (>>=) (Just s) (replicate a (moveOne f t))
+apply (Move a f t) s = move a f t s
 
 data Puzzle = Puzzle { stacks :: Stacks
                      , moves  :: [Move]
