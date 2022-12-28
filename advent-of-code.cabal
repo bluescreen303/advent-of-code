@@ -33,6 +33,7 @@ library
         Day_2022_02
         Day_2022_03
         Day_2022_04
+        Day_2022_05
     build-depends:
         parsec ^>=3.1.15.0
     -- Modules included in this library but not exported.
@@ -72,6 +73,15 @@ executable 2022-04
 
     hs-source-dirs:   app
     main-is:          2022-04.hs
+
+    build-depends:
+        advent-of-code
+
+executable 2022-05
+    import:           commons
+
+    hs-source-dirs:   app
+    main-is:          2022-05.hs
 
     build-depends:
         advent-of-code

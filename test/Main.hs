@@ -7,6 +7,8 @@ import qualified Day_2022_02
 import Day_2022_02 (OtherSide(..), OurSide(..))
 import qualified Day_2022_03
 import qualified Day_2022_04
+import qualified Day_2022_05
+import Day_2022_05 (Crate(..), Stacks(..), Move(..), Puzzle(..))
 
 main :: IO ()
 main = hspec . parallel $ do
@@ -62,3 +64,36 @@ main = hspec . parallel $ do
         describe "the second puzzle" . mapSubject Day_2022_04.main2 $ do
             it "should find 4 pairs with overlap" $ \result ->
                 result `shouldBe` Right 4
+
+    describe "2022-05" $ do
+        let exampleStacks = Stacks $ map (map Crate) ["NZ", "DCM", "P"]
+        let moves = [ Move 1 2 1
+                    , Move 3 1 3
+                    , Move 2 2 1
+                    , Move 1 1 2
+                    ]
+        let puzzle = Puzzle exampleStacks moves
+        describe "with manual puzzle input" . before (return puzzle) $ do
+            describe "boxed" . mapSubject (Day_2022_05.boxed . Day_2022_05.stacks) $ do
+                it "should generate bottom-up stacks of same height" $ \xxs ->
+                    xxs `shouldBe` [ [Nothing         ,Just (Crate 'D'),Nothing]
+                                   , [Just (Crate 'N'),Just (Crate 'C'),Nothing]
+                                   , [Just (Crate 'Z'),Just (Crate 'M'),Just (Crate 'P')]]
+            describe "run" . mapSubject Day_2022_05.run $ do
+                it "should return the correct final state" $ \s ->
+                    s `shouldBe` Just (Stacks [ [Crate 'C']
+                                              , [Crate 'M']
+                                              , [Crate 'Z', Crate 'N', Crate 'D', Crate 'P']])
+                describe "top" . mapSubject (fmap Day_2022_05.top) $ do
+                    it "should return the correct final state" $ \s ->
+                        s `shouldBe` Just "CMZ"
+        describe "with example input file" . before (getDataFileName "2022-05-example.txt" >>= readFile) $ do
+            describe "show" . mapSubject (, show puzzle) $ do
+                it "should display the puzzle as in the example" $ \(contents, result) ->
+                    result `shouldBe` contents
+            describe "parse" . mapSubject Day_2022_05.doParse $ do
+                it "should equal the manual input" $ \result ->
+                    result `shouldBe` Right puzzle
+            describe "main" . mapSubject Day_2022_05.main $ do
+                it "should produce the right result" $ \result ->
+                    result `shouldBe` Right (Just "CMZ")
