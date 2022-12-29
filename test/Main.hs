@@ -1,6 +1,7 @@
 module Main (main) where
 
 import Test.Hspec
+import Data.Either (isRight, fromRight)
 import Paths_advent_of_code (getDataFileName)
 import qualified Day_2022_01
 import qualified Day_2022_02
@@ -10,6 +11,8 @@ import qualified Day_2022_04
 import qualified Day_2022_05
 import Day_2022_05 (Crate(..), Stacks(..), Move(..), Puzzle(..))
 import qualified Day_2022_06
+import qualified Day_2022_07
+import Day_2022_07 (FileSystemNode(..), cd, update)
 
 main :: IO ()
 main = hspec . parallel $ do
@@ -102,3 +105,85 @@ main = hspec . parallel $ do
         describe "main" . mapSubject Day_2022_06.main $ do
             it "should produce the right result" $ \result ->
                 map snd result `shouldBe` [19,23,23,29,26]
+    describe "2022-07" $ do
+        let exampleFS = Dir "/"
+                          [ Dir "a"
+                              [ Dir "e"
+                                  [ File "i" 584 ]
+                              , File "f" 29116
+                              , File "g" 2557
+                              , File "h.lst" 62596
+                              ]
+                          , File "b.txt" 14848514
+                          , File "c.dat" 8504156
+                          , Dir "d"
+                              [ File "j" 4060174
+                              , File "d.log" 8033020
+                              , File "d.ext" 5626152
+                              , File "k" 7214296
+                              ]
+                          ]
+        describe "with manual filesystem input" . before (return exampleFS) $ do
+            describe "lsTree" . mapSubject Day_2022_07.lsTree $ do
+                it "should produce the correct rendering" $ \rendering ->
+                    rendering `shouldBe` unlines
+                      [ "- / (dir)"
+                      , "  - a (dir)"
+                      , "    - e (dir)"
+                      , "      - i (file, size=584)"
+                      , "    - f (file, size=29116)"
+                      , "    - g (file, size=2557)"
+                      , "    - h.lst (file, size=62596)"
+                      , "  - b.txt (file, size=14848514)"
+                      , "  - c.dat (file, size=8504156)"
+                      , "  - d (dir)"
+                      , "    - j (file, size=4060174)"
+                      , "    - d.log (file, size=8033020)"
+                      , "    - d.ext (file, size=5626152)"
+                      , "    - k (file, size=7214296)"
+                      ]
+            describe "totalSize" . mapSubject Day_2022_07.totalSize $ do
+                it "should produce the right total size" $ \result ->
+                    result `shouldBe` 48381165
+            describe "main'" . mapSubject (Day_2022_07.main') $ do
+                it "should return the right number" $ \result ->
+                    result `shouldBe` 95437
+            -- describe "walkFS a/e/i" . mapSubject (Day_2022_07.walkFS "a/e/i") $ do
+            --     it "should return the right node" $ \result ->
+            --         result `shouldBe` Right (File "i" 584)
+        let exampleWalker = do
+                cd "/"
+                update [ Dir "a" []
+                       , File "b.txt" 14848514
+                       , File "c.dat" 8504156
+                       , Dir "d" []
+                       ]
+                cd "a"
+                update [ Dir "e" []
+                       , File "f" 29116
+                       , File "g" 2557
+                       , File "h.lst" 62596
+                       ]
+                cd "e"
+                update [ File "i" 584 ]
+                cd "../../a/../d"
+                update [ File "j" 4060174
+                       , File "d.log" 8033020
+                       , File "d.ext" 5626152
+                       , File "k" 7214296
+                       ]
+        describe "with manual filesystem walker input" . before (return exampleWalker) $ do
+            describe "start" . mapSubject Day_2022_07.start $ do
+                it "should generate the exact same tree as our manual input" $ \(_, result) ->
+                    result `shouldBe` exampleFS
+        describe "with example input file" . before (getDataFileName "2022-07-example.txt" >>= readFile) $ do
+            describe "doParse" . mapSubject Day_2022_07.doParse $ do
+                it "should generate the exact same tree as our manual input" $ \result -> do
+                    isRight result `shouldBe` True
+                    let q = fromRight undefined result
+                    snd (Day_2022_07.start q) `shouldBe` exampleFS
+            describe "main" . mapSubject Day_2022_07.main $ do
+                it "should produce the right result" $ \result -> do
+                    isRight result `shouldBe` True
+                    let q = fromRight undefined result
+                    q `shouldBe` 95437
