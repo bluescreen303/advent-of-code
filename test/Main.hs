@@ -145,9 +145,9 @@ main = hspec . parallel $ do
             describe "totalSize" . mapSubject Day_2022_07.totalSize $ do
                 it "should produce the right total size" $ \result ->
                     result `shouldBe` 48381165
-            describe "main'" . mapSubject (Day_2022_07.main') $ do
+            describe "best" . mapSubject Day_2022_07.best $ do
                 it "should return the right number" $ \result ->
-                    result `shouldBe` 95437
+                    result `shouldBe` 24933642
             -- describe "walkFS a/e/i" . mapSubject (Day_2022_07.walkFS "a/e/i") $ do
             --     it "should return the right node" $ \result ->
             --         result `shouldBe` Right (File "i" 584)
@@ -186,4 +186,4 @@ main = hspec . parallel $ do
                 it "should produce the right result" $ \result -> do
                     isRight result `shouldBe` True
                     let q = fromRight undefined result
-                    q `shouldBe` 95437
+                    q `shouldBe` 24933642

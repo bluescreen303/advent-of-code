@@ -12,4 +12,4 @@ main = do
 
     case Lib.main contents of
         Left  err -> error $ "parse error " ++ show err
-        Right r   -> printf "sum of cleanup: %d\n" r
+        Right r   -> printf "best dir would cleanup: %d\n" r

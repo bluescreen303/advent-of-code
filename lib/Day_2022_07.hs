@@ -1,6 +1,8 @@
 module Day_2022_07 where
 
 import Control.Monad.State hiding (get)
+import Data.List (minimumBy)
+import Data.Function (on)
 import Text.Printf (printf)
 import Helpers (splitOn, positiveNatural)
 
@@ -109,13 +111,12 @@ traverseFS :: FileSystemNode -> [FileSystemNode]
 traverseFS f@(File _ _) = [f]
 traverseFS d@(Dir _ cs) = d : concatMap traverseFS cs
 
-cleanableDirs :: FileSystemNode -> [FileSystemNode]
-cleanableDirs = filter ((<= 100000) . totalSize)
-              . filter isDir
-              . traverseFS
-
-main' :: FileSystemNode -> Int
-main' = sum . map totalSize . cleanableDirs
+best :: FileSystemNode -> Int
+best fs = totalSize smallest
+    where current  = totalSize fs
+          needed   = max 0 $ 30000000 - (70000000 - current)
+          options  = filter (\x -> isDir x && totalSize x >= needed) . traverseFS $ fs
+          smallest = minimumBy (compare `on` totalSize) options
 
 main :: String -> Either ParseError Int
-main x = main' . snd . start <$> doParse x
+main x = best . snd . start <$> doParse x
