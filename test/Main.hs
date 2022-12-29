@@ -9,6 +9,7 @@ import qualified Day_2022_03
 import qualified Day_2022_04
 import qualified Day_2022_05
 import Day_2022_05 (Crate(..), Stacks(..), Move(..), Puzzle(..))
+import qualified Day_2022_06
 
 main :: IO ()
 main = hspec . parallel $ do
@@ -97,3 +98,7 @@ main = hspec . parallel $ do
             describe "main" . mapSubject Day_2022_05.main $ do
                 it "should produce the right result" $ \result ->
                     result `shouldBe` Right (Just "MCD")
+    describe "2022-06" . before (getDataFileName "2022-06-example.txt" >>= readFile) $ do
+        describe "main" . mapSubject Day_2022_06.main $ do
+            it "should produce the right result" $ \result ->
+                map snd result `shouldBe` [7, 5, 6, 10, 11]
