@@ -21,7 +21,7 @@ common commons
     default-language: GHC2021
     other-modules:    Paths_advent_of_code
     build-depends:
-        base ^>=4.17.0.0
+        base >= 4.16.3.0 && < 4.18
 
 library
     import:           commons
@@ -95,5 +95,5 @@ test-suite advent-of-code-test
 
     build-depends:
         advent-of-code,
-        hspec ^>= 2.10.6
+        hspec >= 2.9.7 && < 2.11
 

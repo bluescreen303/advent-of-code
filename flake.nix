@@ -13,16 +13,7 @@
   outputs = { self, nixpkgs, flake-utils, bluenix }:
     flake-utils.lib.eachSystem ["x86_64-linux"] (system:
       let pkgs = bluenix.legacyPackages.${system};
-          hlib = pkgs.haskell.lib;
-          hp = pkgs.haskell.packages.ghc943.override {
-            overrides = self: super: {
-              singletons-th = self.singletons-th_3_1_1;
-              singletons-base = hlib.dontCheck self.singletons-base_3_1_1;
-
-              hlint = self.hlint_3_5;
-              ListLike = hlib.dontCheck super.ListLike; # hangs
-            };
-          };
+          hp = pkgs.haskellPackages;
       in
       {
         packages.default = hp.callPackage ./advent-of-code.nix {};
