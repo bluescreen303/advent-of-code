@@ -101,4 +101,4 @@ main = hspec . parallel $ do
     describe "2022-06" . before (getDataFileName "2022-06-example.txt" >>= readFile) $ do
         describe "main" . mapSubject Day_2022_06.main $ do
             it "should produce the right result" $ \result ->
-                map snd result `shouldBe` [7, 5, 6, 10, 11]
+                map snd result `shouldBe` [19,23,23,29,26]

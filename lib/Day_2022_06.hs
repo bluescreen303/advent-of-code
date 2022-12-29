@@ -7,6 +7,6 @@ main = map (\line -> (line, snd $ startPos line))
      . lines
 
 startPos :: String -> (String, Int)
-startPos input = (head b, length a + 4)
-    where (a,b)       = break fourUniqs . tails $ input
-          fourUniqs q = length (nub (take 4 q)) == 4
+startPos input = (head b, length a + 14)
+    where (a,b)   = break uniqs . tails $ input
+          uniqs q = length (nub (take 14 q)) == 14
