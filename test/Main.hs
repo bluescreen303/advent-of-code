@@ -2,6 +2,8 @@ module Main (main) where
 
 import Test.Hspec
 import Data.Either (isRight, fromRight)
+import Data.Maybe (fromJust)
+import Control.Monad ((>=>))
 import Paths_advent_of_code (getDataFileName)
 import qualified Day_2022_01
 import qualified Day_2022_02
@@ -13,6 +15,8 @@ import Day_2022_05 (Crate(..), Stacks(..), Move(..), Puzzle(..))
 import qualified Day_2022_06
 import qualified Day_2022_07
 import Day_2022_07 (FileSystemNode(..), cd, update)
+import qualified Day_2022_08
+import Day_2022_08 (north, south, west, east, value, look, Eastwards(..))
 
 main :: IO ()
 main = hspec . parallel $ do
@@ -187,3 +191,17 @@ main = hspec . parallel $ do
                     isRight result `shouldBe` True
                     let q = fromRight undefined result
                     q `shouldBe` 24933642
+    describe "2022-08" $ do
+        let exampleGrid = fromJust $ Day_2022_08.grid [[1,2,3], [4,5,6], [7,8,9::Int]]
+        describe "with manual grid input" . before (return exampleGrid) $ do
+            it "should allow me to traverse the grid in all directions" $ \g ->
+                (fmap value . (east >=> south >=> south >=> west >=> north) $ g)
+                `shouldBe`
+                Just 4
+            it "should allow me to look in all directions" $ \g ->
+                let loc = fromJust . (east >=> south >=> south >=> west >=> north) $ g
+                in look @Eastwards loc `shouldBe` [5,6]
+        describe "with example input file" . before (getDataFileName "2022-08-example.txt" >>= readFile) $ do
+            describe "main" . mapSubject Day_2022_08.main $ do
+                it "should produce the right result" $ \result ->
+                    result `shouldBe` Just 21
