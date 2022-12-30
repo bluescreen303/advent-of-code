@@ -11,5 +11,5 @@ main = do
     contents <- readFile filePath
 
     case Lib.main contents of
-        Nothing -> error "invalid grid"
-        Just r  -> printf "result: %d\n" r
+        Nothing      -> error "invalid grid"
+        Just (r, s)  -> printf "visible: %d\nbest scenic score: %d\n" r s

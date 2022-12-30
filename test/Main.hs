@@ -204,4 +204,4 @@ main = hspec . parallel $ do
         describe "with example input file" . before (getDataFileName "2022-08-example.txt" >>= readFile) $ do
             describe "main" . mapSubject Day_2022_08.main $ do
                 it "should produce the right result" $ \result ->
-                    result `shouldBe` Just 21
+                    result `shouldBe` Just (21, 8)

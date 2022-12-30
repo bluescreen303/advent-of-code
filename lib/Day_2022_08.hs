@@ -88,8 +88,22 @@ countVisible = getSum
              . foldMap (\q -> if q then Sum 1 else Sum 0)
              . extend visible
 
+countTrees :: forall b a. (Ord a, Navigate b) => Node a -> Int
+countTrees me = let (ok, rest) = span (< value me) . look @b $ me
+                in length ok + if null rest then 0 else 1
+
+scenicScore :: Ord a => Node a -> Int
+scenicScore me = countTrees @Northwards me
+               * countTrees @Southwards me
+               * countTrees @Westwards  me
+               * countTrees @Eastwards  me
+
+bestScenicScore :: Ord a => Node a -> Int
+bestScenicScore = maximum
+                . extend scenicScore
+
 parse :: String -> [[Int]]
 parse = map (map digitToInt) . lines
 
-main :: String -> Maybe Int
-main = fmap countVisible . grid . parse
+main :: String -> Maybe (Int, Int)
+main = fmap ((,) <$> countVisible <*> bestScenicScore) . grid . parse
