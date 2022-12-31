@@ -26,5 +26,11 @@ splitOn n xs = case break (== n) xs of
                       (items, _:rest) -> items : splitOn n rest
                       (items, _)      -> [items]
 
+splitPer :: Int -> [a] -> [[a]]
+splitPer n xs = let (this, that) = splitAt n xs
+                in this : case that of
+                            [] -> []
+                            _  -> splitPer n that
+
 positiveNatural :: Stream s m Char => ParsecT s u m Int
 positiveNatural = foldl' (\a i -> a * 10 + digitToInt i) 0 <$> many1 digit

@@ -1,5 +1,7 @@
 module Day_2022_10 where
 
+import Helpers
+
 data Instruction = Noop
                  | AddX Int
 
@@ -32,12 +34,9 @@ sample :: Int -> [a] -> [a]
 sample _ []     = []
 sample n (x:xs) = x : sample n (drop (n - 1) xs)
 
-signal :: CPU -> [(Int, Int)]
-signal = sample 40
-       . drop 19
-       . zip [1..]
-       . map registerX
-       . iter tick
+xStream :: CPU -> [Int]
+xStream = map registerX
+        . iter tick
 
 parse :: String -> [Instruction]
 parse = map (parseInstr . words) . lines
@@ -47,4 +46,17 @@ parse = map (parseInstr . words) . lines
 
 main :: String -> Int
 main = sum . map (uncurry (*))
-     . signal . newCPU . parse
+     . sample 40
+     . drop 19
+     . zip [1..]
+     . xStream . newCPU . parse
+
+main2 :: String -> String
+main2 = unlines
+      . splitPer 40
+      . map (\q -> if q then '#' else '.')
+      . zipWith dotPixel (concat . repeat $ [0..39])
+      . xStream . newCPU . parse
+
+dotPixel :: Int -> Int -> Bool
+dotPixel sprite pix = abs (sprite - pix) <= 1
