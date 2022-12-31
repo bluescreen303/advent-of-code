@@ -18,6 +18,7 @@ import Day_2022_07 (FileSystemNode(..), cd, update)
 import qualified Day_2022_08
 import Day_2022_08 (north, south, west, east, value, look, Eastwards(..))
 import qualified Day_2022_09
+import qualified Day_2022_10
 
 main :: IO ()
 main = hspec . parallel $ do
@@ -207,8 +208,6 @@ main = hspec . parallel $ do
                 it "should produce the right result" $ \result ->
                     result `shouldBe` Just (21, 8)
     describe "2022-09" $ do
-        -- let exampleGrid = fromJust $ Day_2022_09.grid [[1,2,3], [4,5,6], [7,8,9::Int]]
-        -- describe "with manual grid input" . before (return exampleGrid) $ do
         describe "with example input file" . before (getDataFileName "2022-09-example.txt" >>= readFile) $ do
             describe "main" . mapSubject Day_2022_09.main $ do
                 it "should produce the right result" $ \result ->
@@ -217,3 +216,8 @@ main = hspec . parallel $ do
             describe "main" . mapSubject Day_2022_09.main $ do
                 it "should produce the right result" $ \result ->
                     result `shouldBe` 36
+    describe "2022-10" $ do
+        describe "with example input file" . before (getDataFileName "2022-10-example.txt" >>= readFile) $ do
+            describe "main" . mapSubject Day_2022_10.main $ do
+                it "should produce the right result" $ \result ->
+                    result `shouldBe` 13140
