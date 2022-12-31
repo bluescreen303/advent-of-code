@@ -23,8 +23,8 @@ parse = concatMap (toMove . words) . lines
 headLocations :: [Move] -> [(Int, Int)]
 headLocations = scanl' (flip id) (0, 0)
 
-tailLocations :: [(Int, Int)] -> [(Int, Int)]
-tailLocations = tail . scanl' moveTail (0, 0)
+nextKnotLocations :: [(Int, Int)] -> [(Int, Int)]
+nextKnotLocations = tail . scanl' moveTail (0, 0)
     where moveTail t@(tailX, tailY) (headX, headY)
               | distance <= 1 = t
               | otherwise     = (tailX + signum diffX, tailY + signum diffY)
@@ -33,4 +33,4 @@ tailLocations = tail . scanl' moveTail (0, 0)
                   distance = max (abs diffX) (abs diffY)
 
 main :: String -> Int
-main = length . nub . tailLocations . headLocations . parse
+main = length . nub . foldr1 (.) (replicate 9 nextKnotLocations) . headLocations . parse

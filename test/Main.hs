@@ -212,4 +212,8 @@ main = hspec . parallel $ do
         describe "with example input file" . before (getDataFileName "2022-09-example.txt" >>= readFile) $ do
             describe "main" . mapSubject Day_2022_09.main $ do
                 it "should produce the right result" $ \result ->
-                    result `shouldBe` 13
+                    result `shouldBe` 1
+        describe "with larger example input file" . before (getDataFileName "2022-09-larger-example.txt" >>= readFile) $ do
+            describe "main" . mapSubject Day_2022_09.main $ do
+                it "should produce the right result" $ \result ->
+                    result `shouldBe` 36
