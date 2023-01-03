@@ -19,6 +19,7 @@ import qualified Day_2022_08
 import Day_2022_08 (north, south, west, east, value, look, Eastwards(..))
 import qualified Day_2022_09
 import qualified Day_2022_10
+import qualified Day_2022_11
 
 main :: IO ()
 main = hspec . parallel $ do
@@ -221,3 +222,10 @@ main = hspec . parallel $ do
             describe "main" . mapSubject Day_2022_10.main $ do
                 it "should produce the right result" $ \result ->
                     result `shouldBe` 13140
+    describe "2022-11" $ do
+        describe "with example input file" . before (getDataFileName "2022-11-example.txt" >>= readFile) $ do
+            describe "main" . mapSubject Day_2022_11.main $ do
+                it "should produce the right result" $ \result -> do
+                    isRight result `shouldBe` True
+                    let (counts, _) = fromRight undefined result
+                    counts `shouldBe` [(0,101),(1,95),(2,7),(3,105)]
