@@ -224,8 +224,6 @@ main = hspec . parallel $ do
                     result `shouldBe` 13140
     describe "2022-11" $ do
         describe "with example input file" . before (getDataFileName "2022-11-example.txt" >>= readFile) $ do
-            describe "main" . mapSubject Day_2022_11.main $ do
-                it "should produce the right result" $ \result -> do
-                    isRight result `shouldBe` True
-                    let (counts, _) = fromRight undefined result
-                    counts `shouldBe` [(0,101),(1,95),(2,7),(3,105)]
+            describe "main" . mapSubject (Day_2022_11.main 20) $ do
+                it "should produce the right result" $ \result ->
+                    result `shouldBe` Right 10605

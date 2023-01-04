@@ -1,48 +1,74 @@
+{-# LANGUAGE ViewPatterns #-}
 module Day_2022_11 where
-import Data.List (partition, groupBy, sortBy)
-import Data.Function (on)
-import Control.Arrow ((>>>), (***))
+import Data.List (partition, sortBy, transpose)
+import Data.Function (fix)
+import Control.Arrow ((***))
 import Helpers
 import Text.Parsec
 import Text.Parsec.Expr (buildExpressionParser, Assoc (AssocLeft))
 import Control.Applicative (liftA2)
 
-import Data.IntMap.Strict (IntMap)
-import qualified Data.IntMap.Strict as IntMap
-
-type Item   = Integer
-type Id     = Int
-type Monkey = [Item] -> [(Id, Item)]
 type Parser = Parsec String ()
 
-monkey :: (Item -> Item) -> (Item -> Bool) -> Id -> Id -> Monkey
-monkey operation test whenTrue whenFalse = foldr go []
-    where go item =
-              let new = operation item
-              in if test new
-                 then ((whenTrue, new) :)
-                 else ((whenFalse, new) :)
+type Item  = Integer
+type Id    = Int
+type Route = (Id, Bool, Id)
 
-run :: [(Id, Monkey)] -> [(Id, Item)] -> [(IntMap Int, [(Id, Item)])]
-run monkeys items = iterate
-                      (foldr1 (>>>) . map go $ monkeys)
-                      (IntMap.empty, items)    -- add counting
-    where go (id', monkey') (!counts, state) = -- counting and state-passing
-              let (these, those) = partition (\(i,_) -> i == id') state
-              in  (IntMap.insertWith (+) id' (length these) counts, those ++ monkey' (map snd these))
+-- posessions per round per monkey
+type Posessions = [[[Item]]]
+-- true and false outputs per round per monkey
+type Outputs    = [[([Item], [Item])]]
 
-parser :: Parser ([(Id, Monkey)], [(Id, Item)])
-parser = foldr go ([], []) <$> many1 monkeyP
-    where go (id', monkey', items) (ms, is) = ((id', monkey') : ms, map (id',) items ++ is)
+routesFor :: [Route] -> Int -> [[([a], [a])] -> [a]]
+routesFor routes me = map toRoute . filter (\(_, _, to) -> to == me) $ routes
+  where toRoute (from, when, _) = roundMod . (if when then fst else snd) . (!! from)
+            where roundMod | me >= from = tail
+                           | otherwise = id
 
-monkeyP :: Parser (Id, Monkey, [Item])
+posessionsFor :: [Route] -> Outputs -> Posessions
+posessionsFor routes perMonkey = map itemsForMonkey [0..length perMonkey - 1]
+  where itemsForMonkey n = foldr (zipWith (++) . getStream) (repeat [])
+                         . filter (\(from, _, to) -> from >= n && to == n) $ routes
+        getStream (from, when, _) = (if when then fst else snd)
+                                  . unzip . tail $ perMonkey !! from
+
+-- monkey that still needs to learn which monkeys will throw items to it
+type DisconnectedMonkey = [[[Item]]] -> ([[Item]], [[Item]])
+
+monkey :: (Item -> Item) -> (Item -> Bool) -> [Item] -> DisconnectedMonkey
+monkey oper tst starters inputs = ([] : ts, [] : fs)
+    where (ts, fs) = unzip
+                   . map ( partition tst
+                   . map ((`div` 3) . oper))
+                   $ foldr1 (zipWith (++)) ((starters : repeat []) : inputs)
+
+connectMonkeys :: [(Id, DisconnectedMonkey, [Route])] -> (Outputs, Posessions)
+connectMonkeys parsed = (map tail result, posessionsFor routes result)
+    where (ids, monkees, concat -> routes) = unzip3 parsed
+          routing      = routesFor routes
+          idMonkees    = zip ids monkees
+          network self = map (\(i, m) -> m $ map ($ self) (routing i)) idMonkees
+          result       = map (uncurry zip) . fix $ network
+
+main :: Int -> String -> Either ParseError Int
+main n = fmap ( fst
+              . ( monkeyBusiness . map countActions *** (take n . transpose))
+              . connectMonkeys )
+         . parse (many1 monkeyP) ""
+    where countActions   = sum . take n . map (uncurry (+) . (length *** length))
+          monkeyBusiness = product . take 2 . sortBy (flip compare)
+
+monkeyP :: Parser (Id, DisconnectedMonkey, [Route])
 monkeyP = go <$ symbol "Monkey" <*> positiveNatural <* symbol ":"
              <* symbol "Starting items:"           <*> lexeme (commaSep (toInteger <$> positiveNatural))
              <* symbol "Operation: new ="          <*> operationP "old"
              <* symbol "Test: divisible by"        <*> lexeme (flip divisible . toInteger <$> positiveNatural)
              <* symbol "If true: throw to monkey"  <*> lexeme positiveNatural
              <* symbol "If false: throw to monkey" <*> lexeme positiveNatural
-    where go !me starters !operation !test !true !false = (me, monkey operation test true false, starters)
+    where go me starters operation test true false = ( me
+                                                     , monkey operation test starters
+                                                     , [(me, True, true), (me, False, false)]
+                                                     )
 
 -- parser for simple operations. supports positive and negative numbers,
 -- postfix ++, addition, subtraction, multiplication, integer division,
@@ -58,15 +84,3 @@ operationP varName = go
           term = parens go
              <|> const <$> lexeme (toInteger <$> positiveNatural)
              <|> id    <$  symbol varName
-
-main :: String -> Either ParseError ([(Id, Int)], [[[Item]]], Int)
-main = fmap ( uncurry monkeyBusiness
-            . (countItemsPerMonkey *** map perRoundPerMonkey)
-            . unzip
-            . take 1001 -- round 0 represents initial state, so we need one more
-            . uncurry run
-            )
-     . parse parser ""
-  where countItemsPerMonkey = IntMap.toList . last
-        perRoundPerMonkey   = map (map snd) . groupBy ((==) `on` fst) . sortBy (compare `on` fst)
-        monkeyBusiness a b  = (a, b, product . take 2 . sortBy (flip compare) . map snd $ a)

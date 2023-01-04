@@ -8,11 +8,6 @@ main = do
     filePath <- argOr "2022-11-example.txt"
     contents <- readFile filePath
 
-    case Lib.main contents of
+    case Lib.main 20 contents of
         Left e   -> error $ "parse error: " ++ show e
-        Right (counts, states, monkeyBusiness) -> do
-            -- mapM_ print states
-            -- putStrLn "---"
-            -- print counts
-            -- putStrLn "---"
-            print monkeyBusiness
+        Right q -> print q
