@@ -1,4 +1,16 @@
-module Helpers where
+module Helpers ( argOr
+               , binary
+               , commaSep
+               , divisible
+               , grouped
+               , lexeme
+               , parens
+               , positiveNatural
+               , postfix
+               , prefix
+               , splitOn
+               , splitPer
+               , symbol ) where
 
 import Paths_advent_of_code (getDataFileName)
 import System.Environment (getArgs)
@@ -57,11 +69,17 @@ symbol = P.symbol lexer
 commaSep :: ParsecT String u Identity a -> ParsecT String u Identity [a]
 commaSep = P.commaSep lexer
 
+reservedOp :: String -> ParsecT String u Identity ()
+reservedOp = P.reservedOp lexer
+
 binary :: String -> (a -> a -> a) -> Assoc -> Operator String u Identity a
-binary  name fun = Infix   (do { P.reservedOp lexer name; return fun })
+binary  name fun = Infix   (do { reservedOp name; return fun })
 
 prefix :: String -> (a -> a) -> Operator String u Identity a
-prefix  name fun = Prefix  (do { P.reservedOp lexer name; return fun })
+prefix  name fun = Prefix  (do { reservedOp name; return fun })
 
 postfix :: String -> (a -> a) -> Operator String u Identity a
-postfix name fun = Postfix (do { P.reservedOp lexer name; return fun })
+postfix name fun = Postfix (do { reservedOp name; return fun })
+
+parens :: ParsecT String u Identity a -> ParsecT String u Identity a
+parens = P.parens lexer

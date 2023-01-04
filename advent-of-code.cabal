@@ -44,7 +44,8 @@ library
         parsec ^>=3.1.15.0,
         mtl >= 2.2 && < 2.4,
         comonad ^>= 5.0,
-        ghc-prim ^>= 0.8
+        ghc-prim ^>= 0.8,
+        containers ^>= 0.6.5.1,
     -- Modules included in this library but not exported.
     -- other-modules:
     -- LANGUAGE extensions used by modules in this package.

@@ -11,8 +11,8 @@ main = do
     case Lib.main contents of
         Left e   -> error $ "parse error: " ++ show e
         Right (counts, states, monkeyBusiness) -> do
-            mapM_ print states
-            putStrLn "---"
-            print counts
-            putStrLn "---"
+            -- mapM_ print states
+            -- putStrLn "---"
+            -- print counts
+            -- putStrLn "---"
             print monkeyBusiness
