@@ -8,6 +8,6 @@ main = do
     filePath <- argOr "2022-11-example.txt"
     contents <- readFile filePath
 
-    case Lib.main 20 contents of
-        Left e   -> error $ "parse error: " ++ show e
+    case Lib.main 10000 contents of
+        Left e  -> error $ "parse error: " ++ show e
         Right q -> print q
