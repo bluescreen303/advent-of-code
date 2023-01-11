@@ -28,6 +28,7 @@ library
 
     hs-source-dirs:   lib
     exposed-modules:
+        Grid
         Helpers
         Day_2022_01
         Day_2022_02
@@ -45,7 +46,7 @@ library
         mtl >= 2.2 && < 2.4,
         comonad ^>= 5.0,
         ghc-prim ^>= 0.8,
-        containers ^>= 0.6.5.1,
+        vector ^>= 0.13.0.0,
     -- Modules included in this library but not exported.
     -- other-modules:
     -- LANGUAGE extensions used by modules in this package.

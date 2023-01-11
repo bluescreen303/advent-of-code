@@ -16,7 +16,8 @@ import qualified Day_2022_06
 import qualified Day_2022_07
 import Day_2022_07 (FileSystemNode(..), cd, update)
 import qualified Day_2022_08
-import Day_2022_08 (north, south, west, east, value, look, Eastwards(..))
+import qualified Grid
+import Grid (north, south, west, east, value, look, Eastwards)
 import qualified Day_2022_09
 import qualified Day_2022_10
 import qualified Day_2022_11
@@ -195,7 +196,7 @@ main = hspec . parallel $ do
                     let q = fromRight undefined result
                     q `shouldBe` 24933642
     describe "2022-08" $ do
-        let exampleGrid = fromJust $ Day_2022_08.grid [[1,2,3], [4,5,6], [7,8,9::Int]]
+        let exampleGrid = fromJust $ Grid.grid [[1,2,3], [4,5,6], [7,8,9::Int]]
         describe "with manual grid input" . before (return exampleGrid) $ do
             it "should allow me to traverse the grid in all directions" $ \g ->
                 (fmap value . (east >=> south >=> south >=> west >=> north) $ g)

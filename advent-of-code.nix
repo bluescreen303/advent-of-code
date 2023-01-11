@@ -1,5 +1,5 @@
-{ mkDerivation, base, comonad, containers, ghc-prim, hspec, lib
-, mtl, parsec
+{ mkDerivation, base, comonad, ghc-prim, hspec, lib, mtl, parsec
+, vector
 }:
 mkDerivation {
   pname = "advent-of-code";
@@ -9,7 +9,7 @@ mkDerivation {
   isExecutable = true;
   enableSeparateDataOutput = true;
   libraryHaskellDepends = [
-    base comonad containers ghc-prim mtl parsec
+    base comonad ghc-prim mtl parsec vector
   ];
   executableHaskellDepends = [ base ];
   testHaskellDepends = [ base hspec ];
