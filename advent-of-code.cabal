@@ -46,7 +46,7 @@ library
         mtl >= 2.2 && < 2.4,
         comonad ^>= 5.0,
         ghc-prim ^>= 0.8,
-        vector ^>= 0.13.0.0,
+        vector ^>= 0.12.3.1,
     -- Modules included in this library but not exported.
     -- other-modules:
     -- LANGUAGE extensions used by modules in this package.
