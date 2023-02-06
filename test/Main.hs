@@ -109,10 +109,12 @@ main = hspec . parallel $ do
             describe "main" . mapSubject Day_2022_05.main $ do
                 it "should produce the right result" $ \result ->
                     result `shouldBe` Right (Just "MCD")
+
     describe "2022-06" . before (getDataFileName "2022-06-example.txt" >>= readFile) $ do
         describe "main" . mapSubject Day_2022_06.main $ do
             it "should produce the right result" $ \result ->
                 map snd result `shouldBe` [19,23,23,29,26]
+
     describe "2022-07" $ do
         let exampleFS = Dir "/"
                           [ Dir "a"
@@ -195,6 +197,7 @@ main = hspec . parallel $ do
                     isRight result `shouldBe` True
                     let q = fromRight undefined result
                     q `shouldBe` 24933642
+
     describe "2022-08" $ do
         let exampleGrid :: Grid [3,3] Int = fromJust $ mkGrid [[1,2,3], [4,5,6], [7,8,9]]
         describe "with manual grid input" . before (return . mkFocus $ exampleGrid) $ do
@@ -209,6 +212,7 @@ main = hspec . parallel $ do
             describe "main" . mapSubject Day_2022_08.main $ do
                 it "should produce the right result" $ \result ->
                     result `shouldBe` Just (21, 8)
+
     describe "2022-09" $ do
         describe "with example input file" . before (getDataFileName "2022-09-example.txt" >>= readFile) $ do
             describe "main" . mapSubject Day_2022_09.main $ do
@@ -218,11 +222,13 @@ main = hspec . parallel $ do
             describe "main" . mapSubject Day_2022_09.main $ do
                 it "should produce the right result" $ \result ->
                     result `shouldBe` 36
+
     describe "2022-10" $ do
         describe "with example input file" . before (getDataFileName "2022-10-example.txt" >>= readFile) $ do
             describe "main" . mapSubject Day_2022_10.main $ do
                 it "should produce the right result" $ \result ->
                     result `shouldBe` 13140
+
     describe "2022-11" $ do
         describe "with example input file" . before (getDataFileName "2022-11-example.txt" >>= readFile) $ do
             describe "main" . mapSubject (Day_2022_11.main 20) $ do

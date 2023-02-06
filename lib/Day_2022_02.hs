@@ -28,10 +28,10 @@ against Win    = winAgainst
 against Defeat = loseAgainst
 
 battle :: Shape -> Shape -> Result
-battle h1       h2
+battle h1 h2
     | h1 == h2            = Draw
     | h1 == winAgainst h2 = Win
-battle _        _         = Defeat
+battle _  _               = Defeat
 
 data Result = Win
             | Draw
@@ -87,9 +87,9 @@ parseStrategyGuide = map parseLine . lines
 
 playGuide :: [(OtherSide, OurSide)] -> Integer
 playGuide = sum
-          . map (uncurry roundScore)
-          . map (\(theirShape, ourResult) -> (ourResult `against` theirShape, ourResult))
-          . map (\(them, us) -> (decrypt them, decrypt us))
+          . map ( uncurry roundScore
+                . (\(theirShape, ourResult) -> (ourResult `against` theirShape, ourResult))
+                . (\(them, us) -> (decrypt them, decrypt us)))
 
 main :: String -> Integer
 main = playGuide . parseStrategyGuide
