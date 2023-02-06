@@ -30,6 +30,7 @@ library
     exposed-modules:
         Grid
         Helpers
+        TypeLevel
         Day_2022_01
         Day_2022_02
         Day_2022_03
@@ -48,7 +49,8 @@ library
         ghc-prim ^>= 0.8,
         vector ^>= 0.12.3.1,
     -- Modules included in this library but not exported.
-    -- other-modules:
+    other-modules:
+        Sized
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
 

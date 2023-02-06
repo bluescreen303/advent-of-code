@@ -1,105 +1,198 @@
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE AllowAmbiguousTypes #-}
-module Grid ( Node
-            , Direction
-            , Northwards
-            , Southwards
-            , Westwards
-            , Eastwards
-            , Navigate
-            , grid
-            , ungrid
-            , value
-            , setValue
-            , look
-            , north
-            , south
-            , west
-            , east
+{-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE TypeFamilyDependencies #-}
+
+module Grid ( Grid, mkGrid, unGrid, append, Grid.zipWith
+            , SomeGrid(..), mkSomeGrid, toSomeGrid
+            , grid2D, grid3D, north, south, east, west
+            , Layers(..), topLayer
+            , Focus(..), mkFocus, value, values, setValue
+            , move, walk, look
             ) where
 
 import Control.Comonad (Comonad(..))
-import Data.Maybe (fromJust)
-import Data.Foldable (Foldable(toList))
-import GHC.Types (Coercible)
-import GHC.Prim (coerce)
-import Data.Vector (Vector, (!), (!?), (//))
+import Data.Type.Equality (TestEquality(testEquality))
+import Data.Vector (Vector, (!))
 import qualified Data.Vector as V
+import Numeric.Natural ( Natural )
+import GHC.Natural (minusNaturalMaybe)
+import GHC.TypeLits (KnownNat, type (+))
+import TypeLevel
+import Sized (Indexed(..), Sized (..), Index, InputForm, Dim, pack, modIndex)
+import Data.Functor.Identity (Identity(..))
 
-newtype Grid a = Grid { unGrid :: Vector (Vector a) } deriving (Functor, Foldable)
+newtype Grid (sx :: [Natural]) t = Grid (Vector t)
+    deriving (Functor, Foldable, Traversable)
 
-toGrid :: [[a]] -> Grid a
-toGrid = Grid . V.fromList . map V.fromList
+mkGrid :: forall sx t. (Singular NList sx, Dim (Length sx))
+       => InputForm (Length sx) t -> Maybe (Grid sx t)
+mkGrid input = do (Some d, v) <- pack @(Length sx) @t input
+                  _ <- testEquality (singular :: NList sx) d
+                  return $ Grid v
 
-fromGrid :: Grid a -> [[a]]
-fromGrid (Grid v) = map V.toList . V.toList $ v
+unGrid :: forall sx t. Sized sx
+       => Grid sx t -> InputForm (Length sx) t
+unGrid (Grid v) = inputForm @sx v
 
-data Node a = Node { fgrid :: Grid a
-                   , focus :: (Int, Int) }
-              deriving (Functor, Foldable)
+instance Indexed Grid where
+    type Get Grid t = t
+    get :: forall sx t. Sized sx => Index sx -> Grid sx t -> t
+    get idx (Grid v) = (v !) . fromIntegral . slice @sx $ idx
+    getAll = get
+    set :: forall sx t. Sized sx => t -> Index sx -> Grid sx t -> Grid sx t
+    set val idx (Grid v) = Grid (v V.// [(fromIntegral $ slice @sx idx, val)])
+    imap fn = Grid . V.imap (fn . unslice . fromIntegral) . toVec
+      where toVec (Grid v) = v
 
-grid :: [[a]] -> Maybe (Node a)
-grid = moveTo (0,0) . flip Node (0, 0) . toGrid
+-- utils
 
-ungrid :: Node a -> [[a]]
-ungrid = fromGrid . fgrid
+append :: Grid (x ': xs) t -> Grid (y ': xs) t -> Grid (x + y ': xs) t
+append (Grid v1) (Grid v2) = Grid $ v1 V.++ v2
 
-moveTo :: (Int, Int) -> Node a -> Maybe (Node a)
-moveTo (x, y) (Node (Grid v) _) = do
-    l <- v !? y
-    _ <- l !? x
-    return (Node (Grid v) (x, y))
+zipWith :: (a -> b -> c) -> Grid sx a -> Grid sx b -> Grid sx c
+zipWith fn (Grid v1) (Grid v2) = Grid (V.zipWith fn v1 v2)
 
-north :: Node a -> Maybe (Node a)
-north f@(Node _ (x, y)) = moveTo (x, y-1) f
+-- grids of size only known at runtime
 
-south :: Node a -> Maybe (Node a)
-south f@(Node _ (x, y)) = moveTo (x, y+1) f
+data SomeGrid t where
+    SomeGrid :: Grid sx t -> NList sx -> SomeGrid t
 
-west :: Node a -> Maybe (Node a)
-west f@(Node _ (x, y)) = moveTo (x-1, y) f
+toSomeGrid :: Singular NList sx => Grid sx t -> SomeGrid t
+toSomeGrid g = SomeGrid g singular
 
-east :: Node a -> Maybe (Node a)
-east f@(Node _ (x, y)) = moveTo (x+1, y) f
+mkSomeGrid :: forall n t. Dim (P n) => InputForm (P n) t -> Maybe (SomeGrid t)
+mkSomeGrid input = do (Some dim, v) <- pack @(P n) @t input
+                      return $ SomeGrid (Grid v) dim
 
-value :: Node a -> a
-value  (Node (Grid v) (x, y)) = v ! y ! x
+-- 2D & 3D utils
 
-setValue :: a -> Node a -> Node a
-setValue s (Node (Grid v) (x, y)) = Node (Grid vert) (x, y)
-    where vert  = v // [(y, horiz)]
-          horiz = (v ! y) // [(x, s)]
+grid2D :: (forall x y. (KnownNat x, KnownNat y) => Grid [y, x] t -> r) -> SomeGrid t -> r
+grid2D fn (SomeGrid g (SNat :| SNat :| Nil)) = fn g
+grid2D _  _                                  = undefined
 
-newtype Northwards a = Northwards (Node a) deriving Functor
-newtype Southwards a = Southwards (Node a) deriving Functor
-newtype Westwards a  = Westwards  (Node a) deriving Functor
-newtype Eastwards a  = Eastwards  (Node a) deriving Functor
+grid3D :: (forall x y z. (KnownNat x, KnownNat y, KnownNat z) => Grid [z, y, x] t -> r) -> SomeGrid t -> r
+grid3D fn (SomeGrid g (SNat :| SNat :| SNat :| Nil)) = fn g
+grid3D _  _                                          = undefined
 
-class Coercible Node f => Navigate f where
-    step :: f a -> Maybe (Node a)
-    walk :: f a -> Node a
-    walk dir = case step dir of
-                 Nothing -> coerce dir
-                 Just x  -> walk (coerce @_ @(f _) x)
+north :: KnownNat y => Index [y, x] -> Maybe (Index [y, x])
+north = modIndex @0 (`minusNaturalMaybe` 1)
 
-instance Navigate Northwards where step = north . coerce
-instance Navigate Southwards where step = south . coerce
-instance Navigate Westwards where step = west . coerce
-instance Navigate Eastwards where step = east . coerce
+south :: KnownNat y => Index [y, x] -> Maybe (Index [y, x])
+south = modIndex @0 (pure . (+1))
 
-newtype Direction f a = Direction (f a)
+east :: KnownNat x => Index [y, x] -> Maybe (Index [y, x])
+east = modIndex @1 (pure . (+1))
 
-instance Navigate f => Foldable (Direction f) where
-  foldMap :: forall a m. Monoid m => (a -> m) -> Direction f a -> m
-  foldMap fn dir =
-        let self = fn . value . coerce $ dir
-        in maybe self ((self <>) . foldMap @(Direction f) fn . coerce @(Node a))
-                 (step @f (coerce dir))
+west :: KnownNat x => Index [y, x] -> Maybe (Index [y, x])
+west = modIndex @1 (`minusNaturalMaybe` 1)
 
-look :: forall b a. Navigate b => Node a -> [a]
-look = tail . toList @(Direction b) . coerce
+-- instance (KnownNat x, KnownNat y, Show t) => Show (Grid [y, x] t) where
+--       show = unlines . map (concatMap show) . unGrid
 
-instance Comonad Node where
-    extract        = value
-    duplicate self = Node (Grid . V.imap vertical . unGrid . fgrid $ self) (focus self)
-      where vertical   y     = V.imap (horizontal y)
-            horizontal y x _ = fromJust (moveTo (x, y) self)
+--- layered
+
+-- a layered grid is a grid that has a writable top layer (grid)
+-- but by using `getAll`, it can view the layers below.
+-- This can be put to use via Focus and via Comonadic mapping
+
+type Layered (dim :: [Natural]) = HList (Grid dim)
+
+-- non-empty stack of layers
+
+data Layers ts dim t where
+    Layers :: { unLayers :: Layered dim (t ': ts) } -> Layers ts dim t
+
+instance Functor (Layers ts dim) where
+    fmap fn (Layers (g :| gs)) = Layers (fmap fn g :| gs)
+
+instance Foldable (Layers ts dim) where
+    foldr fn z (Layers (g :| _)) = foldr fn z g
+
+topLayer :: Layers ts dim t -> Grid dim t
+topLayer (Layers (g :| _)) = g
+
+instance Indexed (Layers ts) where
+  type Get (Layers ts) t = HList Identity (t ': ts)
+  get     i (Layers (g :| _)) = get i g
+  getAll :: forall sx t. Sized sx => Index sx -> Layers ts sx t -> Get (Layers ts) t
+  getAll  i (Layers l)        = go l
+    where go :: Layered sx ls -> HList Identity ls
+          go Nil       = Nil
+          go (g :| gs) = Identity (get i g) :| go gs
+  set v i (Layers (g :| gs))  = Layers (set v i g :| gs)
+  imap :: Sized sx => (Index sx -> t -> u) -> Layers ts sx t -> Layers ts sx u
+  imap fn (Layers (g :| gs))  = Layers (imap fn g :| gs)
+
+--- focus
+
+data Focus w sx t = Focus { world :: w sx t
+                          , focus :: Index sx
+                          } deriving Functor
+
+instance (Indexed w, Sized sx, Functor (w sx)) => Comonad (Focus w sx) where
+    extract = value
+    duplicate (Focus w f) = Focus (imap go w) f
+        where go i _ = Focus w i
+
+mkFocus :: Sized sx => w sx t -> Focus w sx t
+mkFocus = flip Focus origin
+
+value :: (Indexed w, Sized sx) => Focus w sx t -> t
+value f = get (focus f) (world f)
+
+values :: (Indexed w, Sized sx) => Focus w sx t -> Get w t
+values f = getAll (focus f) (world f)
+
+setValue :: (Indexed w, Sized sx) => t -> Focus w sx t -> Focus w sx t
+setValue x (Focus w f) = Focus (set x f w) f
+
+move :: (Index sx -> Maybe (Index sx)) -> Focus w sx t -> Maybe (Focus w sx t)
+move fn (Focus w f) = Focus w <$> fn f
+
+walk :: (Indexed w, Sized sx) => (Index sx -> Maybe (Index sx)) -> Focus w sx t -> [t]
+walk fn me = value me : maybe [] (walk fn) (move fn me)
+
+look :: (Indexed w, Sized sx) => (Index sx -> Maybe (Index sx)) -> Focus w sx t -> [t]
+look fn me = tail (walk fn me)
+
+
+-- tests & helpers
+
+-- testSomeGrid :: Show t => SomeGrid t -> String
+-- testSomeGrid (SomeGrid (Grid v) dim) = show (v, nListToList dim)
+
+-- nListToList :: NList ns -> [Natural]
+-- nListToList Nil = []
+-- nListToList (x@SNat :| xs) = fromIntegral (natVal x) : nListToList xs
+
+-- finListToList :: HList Finite ns -> [Natural]
+-- finListToList Nil = []
+-- finListToList (x :| xs) = getFin x : finListToList xs
+
+-- test0 :: Grid '[] Int
+-- test0 = fromJust $ mkGrid 42
+
+-- test1 :: Grid '[3] Int
+-- test1 = fromJust $ mkGrid [5,4,3]
+
+-- tst1 :: Int
+-- tst1 = fromJust $ get' [1] test1
+
+-- test2 :: Grid [3,4] Int
+-- test2 = fromJust $ mkGrid [[1,2,3,11],[4,5,6,12],[7,8,9,13]]
+
+-- tst2 :: Int
+-- tst2 = fromJust $ get' [1, 3] test2
+
+-- test2a :: SomeGrid Int
+-- test2a = fromJust $ mkSomeGrid @2 [[1,2,3,11],[4,5,6,12],[7,8,9,13]]
+
+-- test3 :: Grid [3,4,5] Int
+-- test3 = fromJust $ mkGrid [[[001,002,003,004,005],[006,007,008,009,010],[011,012,013,014,015],[016,017,018,019,020]]
+--                           ,[[101,102,103,104,105],[106,107,108,109,110],[111,112,113,114,115],[116,117,118,119,120]]
+--                           ,[[201,202,203,204,205],[206,207,208,209,210],[211,212,213,214,215],[216,217,218,219,220]]]
+
+-- test4 :: Layered [3,4] [Int, String]
+-- test4 = test2 :| fmap show test2 :| Nil
+

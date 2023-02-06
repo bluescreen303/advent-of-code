@@ -1,46 +1,47 @@
-{-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE DataKinds #-}
 module Day_2022_08 where
 
 import Control.Comonad (Comonad(..))
 import Data.Char (digitToInt)
 import Data.Monoid (Sum(..))
+import GHC.TypeLits (KnownNat)
+import Sized (Sized, Index)
 import Grid
 
-visibleFrom :: forall b a. (Ord a, Navigate b) => Node a -> Bool
-visibleFrom me = all (< value me) (look @b me)
+visibleFrom :: (Sized sx, Ord t) => (Index sx -> Maybe (Index sx)) -> Focus Grid sx t -> Bool
+visibleFrom dir me = all (< value me) (look dir me)
 
--- visibleFrom' :: forall b a. (Ord a, Navigate b) => Node a -> Bool
--- visibleFrom' me = maybe True (foldr (flip (&&) . (< value me)) True) next
---     where next :: Maybe (Direction b a)
---           next = fmap coerce . step @b @a . coerce $ me
+visible :: (KnownNat x, KnownNat y, Ord t) => Focus Grid [y, x] t -> Bool
+visible me = visibleFrom north me
+          || visibleFrom south me
+          || visibleFrom west  me
+          || visibleFrom east  me
 
-visible :: Ord a => Node a -> Bool
-visible me = visibleFrom @Northwards me
-          || visibleFrom @Southwards me
-          || visibleFrom @Westwards  me
-          || visibleFrom @Eastwards  me
-
-countVisible :: Ord a => Node a -> Int
+countVisible :: (KnownNat x, KnownNat y, Ord t) => Grid [y, x] t -> Int
 countVisible = getSum
              . foldMap (\q -> if q then Sum 1 else Sum 0)
+             . world
              . extend visible
+             . mkFocus
 
-countTrees :: forall b a. (Ord a, Navigate b) => Node a -> Int
-countTrees me = let (ok, rest) = span (< value me) . look @b $ me
-                in length ok + if null rest then 0 else 1
+countTrees :: (Sized sx, Ord t) => (Index sx -> Maybe (Index sx)) -> Focus Grid sx t -> Int
+countTrees dir me = let (ok, rest) = span (< value me) . look dir $ me
+                    in length ok + if null rest then 0 else 1
 
-scenicScore :: Ord a => Node a -> Int
-scenicScore me = countTrees @Northwards me
-               * countTrees @Southwards me
-               * countTrees @Westwards  me
-               * countTrees @Eastwards  me
+scenicScore :: (KnownNat x, KnownNat y, Ord t) => Focus Grid [y, x] t -> Int
+scenicScore me = countTrees north me
+               * countTrees south me
+               * countTrees west  me
+               * countTrees east  me
 
-bestScenicScore :: Ord a => Node a -> Int
+bestScenicScore :: (KnownNat x, KnownNat y, Ord t) => Grid [y, x] t -> Int
 bestScenicScore = maximum
+                . world
                 . extend scenicScore
+                . mkFocus
 
 parse :: String -> [[Int]]
 parse = map (map digitToInt) . lines
 
 main :: String -> Maybe (Int, Int)
-main = fmap ((,) <$> countVisible <*> bestScenicScore) . grid . parse
+main = fmap (grid2D ((,) <$> countVisible <*> bestScenicScore)) . mkSomeGrid @2 . parse
