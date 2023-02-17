@@ -5,7 +5,7 @@ import Test.Hspec
 import Data.Either (isRight, fromRight)
 import Data.Maybe (fromJust)
 import Control.Arrow (second)
-import Control.Monad ((>=>))
+import Control.Monad ((>=>), (<=<))
 import Paths_advent_of_code (getDataFileName)
 import qualified Day_2022_01
 import qualified Day_2022_02
@@ -243,9 +243,9 @@ main = hspec . parallel $ do
             describe "with parsed version" . mapSubject (\x -> (x, mkGrid @[5, 8] . Day_2022_12.parse $ x)) $ do
                 it "show should recover the input file" $ \(str, parsed) ->
                     fmap show parsed `shouldBe` Just str
-                describe "tracked" . mapSubject ((Day_2022_12.track =<<) . snd) $ do
+                describe "tracked" . mapSubject (Day_2022_12.track <=< snd) $ do
                     let gwOk = Day_2022_12.stepE >=> Day_2022_12.stepE
-                    describe "when track is not too steep" . mapSubject ((>>= Day_2022_12.liftVisited gwOk)) $ do
+                    describe "when track is not too steep" . mapSubject (>>= Day_2022_12.liftVisited gwOk) $ do
                         it "should walk ok" $ \result ->
                             fmap (show . topLayer . world) result
                             `shouldBe`
@@ -268,6 +268,9 @@ main = hspec . parallel $ do
             describe "main" . mapSubject Day_2022_12.main $ do
                 it "should produce the expected result" $ \result ->
                     result `shouldBe` Just 31
+            describe "mainAll" . mapSubject Day_2022_12.mainAll $ do
+                it "should produce the expected result" $ \result ->
+                    result `shouldBe` Just 29
         describe "with my input" . before (getDataFileName "2022-12-other.txt" >>= readFile) $ do
             describe "parsed and tracked" . mapSubject ((mkGrid @[5, 8] . Day_2022_12.parse) >=> Day_2022_12.track) $ do
                 it "should produce the expected tracking map" $ \tracked ->

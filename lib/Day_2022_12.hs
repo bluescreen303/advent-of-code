@@ -8,7 +8,7 @@ import Control.Comonad (Comonad(..))
 import Data.Char (ord)
 import Data.Foldable (find)
 import Data.Traversable (mapAccumR)
-import Data.Maybe (mapMaybe)
+import Data.Maybe (mapMaybe, listToMaybe)
 import GHC.Char (chr)
 import Control.Arrow (second)
 import GHC.TypeLits (KnownNat)
@@ -73,17 +73,25 @@ toVisited = fmap isVisited . topLayer . world
 liftVisited :: (WorldStateWithVisits x y -> Maybe (WorldStateWithVisits x y)) -> WorldState x y -> Maybe (WorldState x y)
 liftVisited fn x = fmap removeVisited . fn . addVisited (toVisited x) $ x
 
+isLowest :: Location -> Bool
+isLowest l = height l == 0
 
-track :: (KnownNat x, KnownNat y) => Grid [y, x] Location -> Maybe (WorldState x y)
-track groundLayer =
-      find ((== Here) . value)
+isStartPos :: Location -> Bool
+isStartPos StartLoc = True
+isStartPos _        = False
+
+
+trackAll :: (KnownNat x, KnownNat y) => (Location -> Bool) -> Grid [y, x] Location -> [WorldState x y]
+trackAll p =
+      foldMap (\x -> [mapFocus (addLayer (fmap startLoc . world $ x) . toLayers) x | p (value x)])
       . world
       . duplicate
       . mkFocus
-      . Layers
-      $ fmap starter groundLayer :| groundLayer :| Nil
-    where starter StartLoc = Here
-          starter _        = Unvisited
+  where startLoc x | p x       = Here
+                   | otherwise = Unvisited
+
+track :: (KnownNat x, KnownNat y) => Grid [y, x] Location -> Maybe (WorldState x y)
+track = listToMaybe . trackAll isStartPos
 
 step :: (KnownNat x, KnownNat y)
      => (forall ts a. Focus (Layers ts) [y, x] a -> Maybe (Focus (Layers ts) [y, x] a))
@@ -121,15 +129,22 @@ stepEverywhere visited ns = maybe (Walking options) Found $ find end (snd option
             _                                       -> False
 
 
-solve :: forall x y. (KnownNat x, KnownNat y) => WorldState x y -> Maybe (Int, Grid [y, x] Tracking)
-solve n = go 1 [n] (toVisited n)
+solveAll :: (KnownNat x, KnownNat y) => [WorldState x y] -> Maybe (Int, Grid [y, x] Tracking)
+solveAll [] = Nothing
+solveAll nn = go 1 nn (foldr1 (Grid.zipWith (||)) $ map toVisited nn)
     where go i ns v = case stepEverywhere v ns of
               Walking (v', ns') -> go (i+1) ns' v'
               Found s           -> Just (i, topLayer $ world s)
               NotFound          -> Nothing
 
+solve :: (KnownNat x, KnownNat y) => WorldState x y -> Maybe (Int, Grid [y, x] Tracking)
+solve n = solveAll [n]
+
 main :: String -> Maybe Int
-main = fmap fst . ((mkSomeGrid @2 . parse) >=> grid2D (track >=> solve >=> (return . second toSomeGrid)))
+main = fmap fst . ((mkSomeGrid @2 . parse) >=> grid2D (solveAll . trackAll isStartPos >=> (return . second toSomeGrid)))
+
+mainAll :: String -> Maybe Int
+mainAll = fmap fst . ((mkSomeGrid @2 . parse) >=> grid2D (solveAll . trackAll isLowest >=> return . second toSomeGrid))
 
 -- l1 :: Grid [2,2] Int
 -- l1 = fromJust $ mkGrid [[1,2],[3,4]]

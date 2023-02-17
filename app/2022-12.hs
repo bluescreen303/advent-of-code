@@ -9,3 +9,4 @@ main = do
     contents <- readFile filePath
 
     print $ Lib.main contents
+    print $ Lib.mainAll contents

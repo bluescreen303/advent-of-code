@@ -6,8 +6,8 @@
 module Grid ( Grid, mkGrid, unGrid, append, Grid.zipWith
             , SomeGrid(..), mkSomeGrid, toSomeGrid
             , grid2D, grid3D, north, south, east, west
-            , Layers(..), topLayer
-            , Focus(..), mkFocus, value, values, setValue
+            , Layers(..), topLayer, toLayers, addLayer
+            , Focus(..), mkFocus, mapFocus, value, values, setValue
             , move, walk, look
             ) where
 
@@ -109,6 +109,12 @@ instance Functor (Layers ts dim) where
 instance Foldable (Layers ts dim) where
     foldr fn z (Layers (g :| _)) = foldr fn z g
 
+toLayers :: Grid dim t -> Layers '[] dim t
+toLayers g = Layers (g :| Nil)
+
+addLayer :: Grid dim x -> Layers ts dim t -> Layers (t ': ts) dim x
+addLayer g (Layers ls) = Layers (g :| ls)
+
 topLayer :: Layers ts dim t -> Grid dim t
 topLayer (Layers (g :| _)) = g
 
@@ -129,6 +135,9 @@ instance Indexed (Layers ts) where
 data Focus w sx t = Focus { world :: w sx t
                           , focus :: Index sx
                           } deriving Functor
+
+mapFocus :: (w1 sx a -> w2 sx b) -> Focus w1 sx a -> Focus w2 sx b
+mapFocus fn (Focus w f) = Focus (fn w) f
 
 instance (Indexed w, Sized sx, Functor (w sx)) => Comonad (Focus w sx) where
     extract = value
