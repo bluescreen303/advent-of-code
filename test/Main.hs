@@ -4,6 +4,7 @@ module Main (main) where
 import Test.Hspec
 import Data.Either (isRight, fromRight)
 import Data.Maybe (fromJust)
+import Control.Arrow (second)
 import Control.Monad ((>=>))
 import Paths_advent_of_code (getDataFileName)
 import qualified Day_2022_01
@@ -17,10 +18,12 @@ import qualified Day_2022_06
 import qualified Day_2022_07
 import Day_2022_07 (FileSystemNode(..), cd, update)
 import qualified Day_2022_08
-import Grid (Grid, mkGrid, mkFocus, value, move, look, east, west, north, south)
+import Grid (Grid, mkGrid, east, west, north, south, mkFocus, value, move, look, topLayer, world)
 import qualified Day_2022_09
 import qualified Day_2022_10
 import qualified Day_2022_11
+import qualified Day_2022_12
+import Day_2022_12 (Tracking(..))
 
 main :: IO ()
 main = hspec . parallel $ do
@@ -234,3 +237,47 @@ main = hspec . parallel $ do
             describe "main" . mapSubject (Day_2022_11.main 20) $ do
                 it "should produce the right result" $ \result ->
                     result `shouldBe` Right 10197
+
+    describe "2022-12" $ do
+        describe "with example input file" . before (getDataFileName "2022-12-example.txt" >>= readFile) $ do
+            describe "with parsed version" . mapSubject (\x -> (x, mkGrid @[5, 8] . Day_2022_12.parse $ x)) $ do
+                it "show should recover the input file" $ \(str, parsed) ->
+                    fmap show parsed `shouldBe` Just str
+                describe "tracked" . mapSubject ((Day_2022_12.track =<<) . snd) $ do
+                    let gwOk = Day_2022_12.stepE >=> Day_2022_12.stepE
+                    describe "when track is not too steep" . mapSubject ((>>= Day_2022_12.liftVisited gwOk)) $ do
+                        it "should walk ok" $ \result ->
+                            fmap (show . topLayer . world) result
+                            `shouldBe`
+                            Just (unlines [ ">>#....."
+                                          , "........"
+                                          , "........"
+                                          , "........"
+                                          , "........" ])
+                    let gwBad = gwOk >=> Day_2022_12.stepE
+                    describe "when track is too steep" . mapSubject (>>= Day_2022_12.liftVisited gwBad) $ do
+                        it "should not step" $ \result -> fmap (show . topLayer . world) result `shouldBe` Nothing
+                    describe "solve" . mapSubject (>>= Day_2022_12.solve) $ do
+                        it "should solve the correct path" $ \result ->
+                            fmap (second show) result `shouldBe`
+                                Just (31, unlines [ ">>vv<<<<"
+                                                  , "..vvv<<^"
+                                                  , "..vv>#^^"
+                                                  , "..v>>>^^"
+                                                  , "..>>>>>^" ])
+            describe "main" . mapSubject Day_2022_12.main $ do
+                it "should produce the expected result" $ \result ->
+                    result `shouldBe` Just 31
+        describe "with my input" . before (getDataFileName "2022-12-other.txt" >>= readFile) $ do
+            describe "parsed and tracked" . mapSubject ((mkGrid @[5, 8] . Day_2022_12.parse) >=> Day_2022_12.track) $ do
+                it "should produce the expected tracking map" $ \tracked ->
+                    fmap (show . topLayer . world) tracked
+                    `shouldBe`
+                    Just ( unlines [ "........"
+                                   , "..#....."
+                                   , "........"
+                                   , "........"
+                                   , "........"
+                                   ])
+                it "should put me at the current/start position" $ \tracked ->
+                    fmap value tracked `shouldBe` Just Here
