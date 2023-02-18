@@ -24,6 +24,8 @@ import qualified Day_2022_10
 import qualified Day_2022_11
 import qualified Day_2022_12
 import Day_2022_12 (Tracking(..))
+import qualified Day_2022_13
+import Day_2022_13 (Tree(..))
 
 main :: IO ()
 main = hspec . parallel $ do
@@ -284,3 +286,32 @@ main = hspec . parallel $ do
                                    ])
                 it "should put me at the current/start position" $ \tracked ->
                     fmap value tracked `shouldBe` Just Here
+
+    describe "2022-13" $ do
+        describe "with example input file" . before (getDataFileName "2022-13-example.txt" >>= readFile) $ do
+            let exampleInput = [ ( Node [Leaf 1,Leaf 1,Leaf 3,Leaf 1,Leaf 1]
+                                 , Node [Leaf 1,Leaf 1,Leaf 5,Leaf 1,Leaf 1] )
+                               , ( Node [Node [Leaf 1],Node [Leaf 2,Leaf 3,Leaf 4]]
+                                 , Node [Node [Leaf 1],Leaf 4] )
+                               , ( Node [Leaf 9]
+                                 , Node [Node [Leaf 8,Leaf 7,Leaf 6]] )
+                               , ( Node [Node [Leaf 4,Leaf 4],Leaf 4,Leaf 4]
+                                 , Node [Node [Leaf 4,Leaf 4],Leaf 4,Leaf 4,Leaf 4] )
+                               , ( Node [Leaf 7,Leaf 7,Leaf 7,Leaf 7]
+                                 , Node [Leaf 7,Leaf 7,Leaf 7] )
+                               , ( Node []
+                                 , Node [Leaf 3] )
+                               , ( Node [Node [Node []]]
+                                 , Node [Node []] )
+                               , ( Node [Leaf 1,Node [Leaf 2,Node [Leaf 3,Node [Leaf 4,Node [Leaf 5,Leaf 6,Leaf 7]]]],Leaf 8,Leaf 9]
+                                 , Node [Leaf 1,Node [Leaf 2,Node [Leaf 3,Node [Leaf 4,Node [Leaf 5,Leaf 6,Leaf 0]]]],Leaf 8,Leaf 9] )
+                               ]
+            describe "parse" . mapSubject Day_2022_13.parse $ do
+                it "should produce the example input" $ \result ->
+                    result `shouldBe` Right exampleInput
+            describe "main" . mapSubject Day_2022_13.main $ do
+                it "should produce the answer" $ \result ->
+                    result `shouldBe` Right 13
+            describe "main2" . mapSubject Day_2022_13.main2 $ do
+                it "should produce the answer" $ \result ->
+                    result `shouldBe` Right 140
