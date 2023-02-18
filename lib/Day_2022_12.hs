@@ -1,5 +1,7 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE PatternSynonyms #-}
+
 module Day_2022_12 where
 
 import Grid
@@ -13,8 +15,7 @@ import GHC.Char (chr)
 import Control.Arrow (second)
 import GHC.TypeLits (KnownNat)
 import Data.Word (Word8)
-import TypeLevel (HList(..))
-import Data.Functor.Identity (Identity(..))
+import TypeLevel (HList(..), pattern II, pattern III)
 
 data Location = Normal Word8
               | StartLoc
@@ -99,8 +100,8 @@ step :: (KnownNat x, KnownNat y)
      -> WorldStateWithVisits x y
      -> Maybe (WorldStateWithVisits x y)
 step dir t node = case values node of
-      Identity Here :| _ :| Identity l1 :| Nil -> (dir . setValue t $ node) >>= \next -> case values next of
-            Identity Unvisited :| Identity False :| Identity l2 :| Nil
+      III Here _ l1 -> (dir . setValue t $ node) >>= \next -> case values next of
+            III Unvisited False l2
                 | height l2 <= height l1 + 1 -> Just $ setValue Here next
             _                                -> Nothing
       _                                      -> Nothing
@@ -125,8 +126,8 @@ stepEverywhere visited ns = maybe (Walking options) Found $ find end (snd option
 
           end :: WorldState x y -> Bool
           end x   = case values x of
-            Identity Here :| Identity EndLoc :| Nil -> True
-            _                                       -> False
+            II Here EndLoc -> True
+            _              -> False
 
 
 solveAll :: (KnownNat x, KnownNat y) => [WorldState x y] -> Maybe (Int, Grid [y, x] Tracking)

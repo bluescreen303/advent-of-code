@@ -20,7 +20,6 @@ import GHC.Natural (minusNaturalMaybe)
 import GHC.TypeLits (KnownNat, type (+))
 import TypeLevel
 import Sized (Indexed(..), Sized (..), Index, InputForm, Dim, pack, modIndex)
-import Data.Functor.Identity (Identity(..))
 
 newtype Grid (sx :: [Natural]) t = Grid (Vector t)
     deriving (Functor, Foldable, Traversable)
@@ -119,13 +118,13 @@ topLayer :: Layers ts dim t -> Grid dim t
 topLayer (Layers (g :| _)) = g
 
 instance Indexed (Layers ts) where
-  type Get (Layers ts) t = HList Identity (t ': ts)
+  type Get (Layers ts) t = IList (t ': ts)
   get     i (Layers (g :| _)) = get i g
   getAll :: forall sx t. Sized sx => Index sx -> Layers ts sx t -> Get (Layers ts) t
   getAll  i (Layers l)        = go l
-    where go :: Layered sx ls -> HList Identity ls
+    where go :: Layered sx ls -> IList ls
           go Nil       = Nil
-          go (g :| gs) = Identity (get i g) :| go gs
+          go (g :| gs) = get i g ::| go gs
   set v i (Layers (g :| gs))  = Layers (set v i g :| gs)
   imap :: Sized sx => (Index sx -> t -> u) -> Layers ts sx t -> Layers ts sx u
   imap fn (Layers (g :| gs))  = Layers (imap fn g :| gs)

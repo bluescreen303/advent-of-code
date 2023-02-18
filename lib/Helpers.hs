@@ -60,16 +60,16 @@ positiveNatural = foldl' (\a i -> a * 10 + digitToInt i) 0 <$> many1 digit
 lexer :: P.GenTokenParser String u Identity
 lexer = P.makeTokenParser L.emptyDef
 
-lexeme :: ParsecT String u Identity a -> ParsecT String u Identity a
+lexeme :: Parsec String u a -> Parsec String u a
 lexeme = P.lexeme lexer
 
-symbol :: String -> ParsecT String u Identity String
+symbol :: String -> Parsec String u String
 symbol = P.symbol lexer
 
-commaSep :: ParsecT String u Identity a -> ParsecT String u Identity [a]
+commaSep :: Parsec String u a -> Parsec String u [a]
 commaSep = P.commaSep lexer
 
-reservedOp :: String -> ParsecT String u Identity ()
+reservedOp :: String -> Parsec String u ()
 reservedOp = P.reservedOp lexer
 
 binary :: String -> (a -> a -> a) -> Assoc -> Operator String u Identity a
@@ -81,5 +81,5 @@ prefix  name fun = Prefix  (do { reservedOp name; return fun })
 postfix :: String -> (a -> a) -> Operator String u Identity a
 postfix name fun = Postfix (do { reservedOp name; return fun })
 
-parens :: ParsecT String u Identity a -> ParsecT String u Identity a
+parens :: Parsec String u a -> Parsec String u a
 parens = P.parens lexer

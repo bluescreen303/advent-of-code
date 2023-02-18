@@ -4,6 +4,7 @@
 {-# LANGUAGE NoStarIsType #-}
 {-# LANGUAGE MagicHash #-}
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE PatternSynonyms #-}
 
 module TypeLevel ( Some(..)
                  , Some2(..)
@@ -16,6 +17,8 @@ module TypeLevel ( Some(..)
                  , SNat(..)
                  , HList(..)
                  , IList
+                 , pattern I, pattern II, pattern III
+                 , pattern (::|)
                  , NList
                  , promoteNatList
                  , ModifyElement(..)
@@ -29,7 +32,7 @@ import Numeric.Natural ( Natural )
 import Data.Kind (Type)
 import GHC.TypeLits (KnownNat, type (-), type (*), sameNat, natVal', SomeNat (SomeNat), someNatVal)
 import Data.Type.Equality (TestEquality (testEquality), type (:~:) (Refl))
-import Data.Functor.Identity (Identity)
+import Data.Functor.Identity (Identity(..))
 import GHC.Exts (proxy#)
 import Data.Maybe (isJust, fromJust)
 
@@ -78,6 +81,18 @@ infixr 5 :|
 
 type IList = HList Identity
 type NList = HList SNat
+
+pattern I :: a -> Identity a
+pattern I x = Identity x
+
+pattern (::|) :: a -> IList as -> IList (a ': as)
+pattern (::|) x xs = Identity x :| xs
+
+pattern II :: a -> b -> IList [a, b]
+pattern II a b = Identity a :| Identity b :| Nil
+
+pattern III :: a -> b -> c -> IList [a, b, c]
+pattern III a b c = Identity a :| Identity b :| Identity c :| Nil
 
 instance TestEquality c => TestEquality (HList c) where
     testEquality Nil       Nil       = Just Refl

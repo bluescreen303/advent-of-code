@@ -13,8 +13,8 @@ module Sized ( InputForm
              , get'
              ) where
 
-import Control.Comonad.Identity (Identity (..))
 import Control.Monad ((<=<))
+import Data.Functor.Identity (Identity(..))
 import Data.List (nub)
 import Data.Maybe (fromJust)
 import Data.Vector (Vector, (!))
