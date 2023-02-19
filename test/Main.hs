@@ -337,16 +337,16 @@ main = hspec . parallel $ do
             describe "fromPaths" . mapSubject (const $ Day_2022_14.fromPaths exampleInput) $ do
                 it "should produce the expected world" $ \result ->
                     result `shouldBe` Day_2022_14.World 11 (IntMap.fromList [ (494, Column [VertBlock 9 0])
-                                                                         , (495, Column [VertBlock 9 0])
-                                                                         , (496, Column [VertBlock 6 0, VertBlock 9 0])
-                                                                         , (497, Column [VertBlock 6 0, VertBlock 9 0])
-                                                                         , (498, Column [VertBlock 4 2, VertBlock 9 0])
-                                                                         , (499, Column [VertBlock 9 0])
-                                                                         , (500, Column [VertBlock 9 0])
-                                                                         , (501, Column [VertBlock 9 0])
-                                                                         , (502, Column [VertBlock 4 5])
-                                                                         , (503, Column [VertBlock 4 0])
-                                                                         ])
+                                                                            , (495, Column [VertBlock 9 0])
+                                                                            , (496, Column [VertBlock 6 0, VertBlock 9 0])
+                                                                            , (497, Column [VertBlock 6 0, VertBlock 9 0])
+                                                                            , (498, Column [VertBlock 4 2, VertBlock 9 0])
+                                                                            , (499, Column [VertBlock 9 0])
+                                                                            , (500, Column [VertBlock 9 0])
+                                                                            , (501, Column [VertBlock 9 0])
+                                                                            , (502, Column [VertBlock 4 5])
+                                                                            , (503, Column [VertBlock 4 0])
+                                                                            ])
 
                 describe "fallOneColumn" $ do
                     describe "the first unit of sand" $ do
@@ -368,28 +368,27 @@ main = hspec . parallel $ do
                     describe "a unit above a wall" $ do
                         it "should land at the correct position" $ \world ->
                             let newWorld = Day_2022_14.World 11 (IntMap.fromList [ (494, Column [VertBlock 9 0])
-                                                                         , (495, Column [VertBlock 9 0])
-                                                                         , (496, Column [VertBlock 6 0, VertBlock 9 0])
-                                                                         , (497, Column [VertBlock 5 1, VertBlock 9 0])
-                                                                         , (498, Column [VertBlock 4 2, VertBlock 9 0])
-                                                                         , (499, Column [VertBlock 9 0])
-                                                                         , (500, Column [VertBlock 9 0])
-                                                                         , (501, Column [VertBlock 9 0])
-                                                                         , (502, Column [VertBlock 4 5])
-                                                                         , (503, Column [VertBlock 4 0])
-                                                                         ])
+                                                                                 , (495, Column [VertBlock 9 0])
+                                                                                 , (496, Column [VertBlock 6 0, VertBlock 9 0])
+                                                                                 , (497, Column [VertBlock 5 1, VertBlock 9 0])
+                                                                                 , (498, Column [VertBlock 4 2, VertBlock 9 0])
+                                                                                 , (499, Column [VertBlock 9 0])
+                                                                                 , (500, Column [VertBlock 9 0])
+                                                                                 , (501, Column [VertBlock 9 0])
+                                                                                 , (502, Column [VertBlock 4 5])
+                                                                                 , (503, Column [VertBlock 4 0])
+                                                                                 ])
                             in Day_2022_14.fall world (Vertex (498, 0)) `shouldBe` Day_2022_14.Landed (Vertex (497, 5)) newWorld
                 describe "simulation" . mapSubject Day_2022_14.simulation $ do
                     it "should have 94 results" $ \sim ->
                         length sim `shouldBe` 94
                     it "should fill up the correct landing positions" $ \sim ->
                         map Day_2022_14.landed (take 24 sim) `shouldBe` [jv (500,8),jv (499,8),jv (501,8),jv (500,7)
-                                                              ,jv (498,8),jv (499,7),jv (501,7),jv (500,6)
-                                                              ,jv (497,8),jv (498,7),jv (499,6),jv (501,6)
-                                                              ,jv (500,5),jv (499,5),jv (501,5),jv (500,4)
-                                                              ,jv (499,4),jv (501,4),jv (500,3),jv (499,3)
-                                                              ,jv (501,3),jv (500,2),jv (497,5),jv (495,8)
-                                                              ]
+                                                                        ,jv (498,8),jv (499,7),jv (501,7),jv (500,6)
+                                                                        ,jv (497,8),jv (498,7),jv (499,6),jv (501,6)
+                                                                        ,jv (500,5),jv (499,5),jv (501,5),jv (500,4)
+                                                                        ,jv (499,4),jv (501,4),jv (500,3),jv (499,3)
+                                                                        ,jv (501,3),jv (500,2),jv (497,5),jv (495,8)]
 
             describe "main" . mapSubject Day_2022_14.main $ do
                 it "should produce the expected result" $ \result ->
