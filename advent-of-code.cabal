@@ -45,6 +45,7 @@ library
         Day_2022_12
         Day_2022_13
         Day_2022_14
+        Day_2022_15
     build-depends:
         parsec ^>=3.1.15.0,
         mtl >= 2.2 && < 2.4,
@@ -180,6 +181,15 @@ executable 2022-14
 
     hs-source-dirs:   app
     main-is:          2022-14.hs
+
+    build-depends:
+        advent-of-code
+
+executable 2022-15
+    import:           commons
+
+    hs-source-dirs:   app
+    main-is:          2022-15.hs
 
     build-depends:
         advent-of-code

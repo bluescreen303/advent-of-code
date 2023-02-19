@@ -29,6 +29,7 @@ import qualified Day_2022_13
 import Day_2022_13 (Tree(..))
 import qualified Day_2022_14
 import Day_2022_14 (Vertex (..), Path (..), pathSegments, VertBlock(..), Column(..))
+import qualified Day_2022_15
 
 main :: IO ()
 main = hspec . parallel $ do
@@ -393,3 +394,27 @@ main = hspec . parallel $ do
             describe "main" . mapSubject Day_2022_14.main $ do
                 it "should produce the expected result" $ \result ->
                     result `shouldBe` Right 93
+
+    describe "2022-15" $ do
+        describe "with example input file" . before (getDataFileName "2022-15-example.txt" >>= readFile) $ do
+            let exampleInput = [ Day_2022_15.Sensor (Day_2022_15.Vertex (2,18))  (Day_2022_15.Vertex (-2,15))
+                               , Day_2022_15.Sensor (Day_2022_15.Vertex (9,16))  (Day_2022_15.Vertex (10,16))
+                               , Day_2022_15.Sensor (Day_2022_15.Vertex (13,2))  (Day_2022_15.Vertex (15,3))
+                               , Day_2022_15.Sensor (Day_2022_15.Vertex (12,14)) (Day_2022_15.Vertex (10,16))
+                               , Day_2022_15.Sensor (Day_2022_15.Vertex (10,20)) (Day_2022_15.Vertex (10,16))
+                               , Day_2022_15.Sensor (Day_2022_15.Vertex (14,17)) (Day_2022_15.Vertex (10,16))
+                               , Day_2022_15.Sensor (Day_2022_15.Vertex (8,7))   (Day_2022_15.Vertex (2,10))
+                               , Day_2022_15.Sensor (Day_2022_15.Vertex (2,0))   (Day_2022_15.Vertex (2,10))
+                               , Day_2022_15.Sensor (Day_2022_15.Vertex (0,11))  (Day_2022_15.Vertex (2,10))
+                               , Day_2022_15.Sensor (Day_2022_15.Vertex (20,14)) (Day_2022_15.Vertex (25,17))
+                               , Day_2022_15.Sensor (Day_2022_15.Vertex (17,20)) (Day_2022_15.Vertex (21,22))
+                               , Day_2022_15.Sensor (Day_2022_15.Vertex (16,7))  (Day_2022_15.Vertex (15,3))
+                               , Day_2022_15.Sensor (Day_2022_15.Vertex (14,3))  (Day_2022_15.Vertex (15,3))
+                               , Day_2022_15.Sensor (Day_2022_15.Vertex (20,1))  (Day_2022_15.Vertex (15,3))
+                               ]
+            describe "parse" . mapSubject Day_2022_15.parse $ do
+                it "should produce the example input" $ \result ->
+                    result `shouldBe` Right exampleInput
+            describe "main" . mapSubject (Day_2022_15.main (Just 10)) $ do
+                it "should produce the expected result" $ \result ->
+                    result `shouldBe` Right 26

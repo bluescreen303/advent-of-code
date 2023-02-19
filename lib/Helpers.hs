@@ -1,11 +1,15 @@
-module Helpers ( argOr
+module Helpers ( argOr, argOr'
                , binary
                , commaSep
                , divisible
                , grouped
+               , merge
+               , mergeAll
+               , without
                , lexeme
                , parens
                , positiveNatural
+               , parseInt
                , postfix
                , prefix
                , splitOn
@@ -32,11 +36,14 @@ grouped :: String -> [(Integer, [String])]
 grouped = zip [0..] . splitAtEmpty . lines
 
 argOr :: FilePath -> IO String
-argOr dataFileName = do
-    args <- getArgs
-    case args of
-        [f] -> return f
-        _   -> getDataFileName dataFileName
+argOr = fmap fst . argOr' 0
+
+argOr' :: Int -> FilePath -> IO (String, [String])
+argOr' skip dataFileName = do
+    (otherArgs, fileArgs) <- splitAt skip <$> getArgs
+    case fileArgs of
+        [f] -> return (f, otherArgs)
+        _   -> (,otherArgs) <$> getDataFileName dataFileName
 
 splitOn :: Eq a => a -> [a] -> [[a]]
 splitOn n xs = case break (== n) xs of
@@ -52,10 +59,37 @@ splitPer n xs = let (this, that) = splitAt n xs
 divisible :: Integral a => a -> a -> Bool
 divisible x y = x `mod` y == 0
 
+-- set-like behaviour on de-duplicated ordered lists
+
+-- expects de-duplicated, ordered input lists
+merge :: Ord a => [a] -> [a] -> [a]
+merge []         ys         = ys
+merge xs         []         = xs
+merge xxs@(x:xs) yys@(y:ys) = case x `compare` y of
+    LT -> x : merge xs yys
+    EQ -> x : merge xs ys
+    GT -> y : merge xxs ys
+
+-- expects de-duplicated, ordered input lists
+mergeAll :: Ord a => [[a]] -> [a]
+mergeAll = foldr merge []
+
+-- expects de-duplicated, ordered input lists
+without :: Ord a => [a] -> [a] -> [a]
+without []         _          = []
+without xs         []         = xs
+without xxs@(x:xs) yys@(y:ys) = case x `compare` y of
+    LT -> x : without xs yys
+    EQ -> without xs ys
+    GT -> without xxs ys
+
 -- parsing utilities
 
 positiveNatural :: Stream s m Char => ParsecT s u m Int
 positiveNatural = foldl' (\a i -> a * 10 + digitToInt i) 0 <$> many1 digit
+
+parseInt :: Stream s m Char => ParsecT s u m Int
+parseInt = ($) <$> id `option` (negate <$ char '-') <*> positiveNatural
 
 lexer :: P.GenTokenParser String u Identity
 lexer = P.makeTokenParser L.emptyDef
