@@ -336,7 +336,7 @@ main = hspec . parallel $ do
                     result `shouldBe` Right exampleInput
             describe "fromPaths" . mapSubject (const $ Day_2022_14.fromPaths exampleInput) $ do
                 it "should produce the expected world" $ \result ->
-                    result `shouldBe` Day_2022_14.World (IntMap.fromList [ (494, Column [VertBlock 9 0])
+                    result `shouldBe` Day_2022_14.World 11 (IntMap.fromList [ (494, Column [VertBlock 9 0])
                                                                          , (495, Column [VertBlock 9 0])
                                                                          , (496, Column [VertBlock 6 0, VertBlock 9 0])
                                                                          , (497, Column [VertBlock 6 0, VertBlock 9 0])
@@ -348,16 +348,13 @@ main = hspec . parallel $ do
                                                                          , (503, Column [VertBlock 4 0])
                                                                          ])
 
-                describe "bottomOfWorld" $ do
-                    it "should find the bottom of the world" $ \world ->
-                        Day_2022_14.bottomOfWorld world `shouldBe` Just 9
                 describe "fallOneColumn" $ do
                     describe "the first unit of sand" $ do
                         it "should land at the correct position" $ \world ->
                             Day_2022_14.landed (Day_2022_14.fallOneColumn world (Vertex (500, 0))) `shouldBe` jv (500, 8)
                     describe "a unit of sand too far to the left" $ do
-                        it "should go off the bottom" $ \world ->
-                            Day_2022_14.fallOneColumn world (Vertex (400, 0)) `shouldBe` Day_2022_14.OffBottom
+                        it "should land on the infinite bottom" $ \world ->
+                            Day_2022_14.landed (Day_2022_14.fallOneColumn world (Vertex (400, 0))) `shouldBe` jv (400, 10)
                     describe "a unit of sand born in a wall" $ do
                         it "should get stuck" $ \world ->
                             Day_2022_14.fallOneColumn world (Vertex (498, 6)) `shouldBe` Day_2022_14.Stuck
@@ -370,7 +367,7 @@ main = hspec . parallel $ do
                             Day_2022_14.landed (Day_2022_14.fall world (Vertex (500, 0))) `shouldBe` jv (500, 8)
                     describe "a unit above a wall" $ do
                         it "should land at the correct position" $ \world ->
-                            let newWorld = Day_2022_14.World (IntMap.fromList [ (494, Column [VertBlock 9 0])
+                            let newWorld = Day_2022_14.World 11 (IntMap.fromList [ (494, Column [VertBlock 9 0])
                                                                          , (495, Column [VertBlock 9 0])
                                                                          , (496, Column [VertBlock 6 0, VertBlock 9 0])
                                                                          , (497, Column [VertBlock 5 1, VertBlock 9 0])
@@ -383,17 +380,17 @@ main = hspec . parallel $ do
                                                                          ])
                             in Day_2022_14.fall world (Vertex (498, 0)) `shouldBe` Day_2022_14.Landed (Vertex (497, 5)) newWorld
                 describe "simulation" . mapSubject Day_2022_14.simulation $ do
-                    it "should have 25 results" $ \sim ->
-                        length sim `shouldBe` 25
+                    it "should have 94 results" $ \sim ->
+                        length sim `shouldBe` 94
                     it "should fill up the correct landing positions" $ \sim ->
-                        map Day_2022_14.landed sim `shouldBe` [jv (500,8),jv (499,8),jv (501,8),jv (500,7)
+                        map Day_2022_14.landed (take 24 sim) `shouldBe` [jv (500,8),jv (499,8),jv (501,8),jv (500,7)
                                                               ,jv (498,8),jv (499,7),jv (501,7),jv (500,6)
                                                               ,jv (497,8),jv (498,7),jv (499,6),jv (501,6)
                                                               ,jv (500,5),jv (499,5),jv (501,5),jv (500,4)
                                                               ,jv (499,4),jv (501,4),jv (500,3),jv (499,3)
                                                               ,jv (501,3),jv (500,2),jv (497,5),jv (495,8)
-                                                              ,Nothing]
+                                                              ]
 
             describe "main" . mapSubject Day_2022_14.main $ do
                 it "should produce the expected result" $ \result ->
-                    result `shouldBe` Right 24
+                    result `shouldBe` Right 93
