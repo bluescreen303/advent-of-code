@@ -44,12 +44,14 @@ library
         Day_2022_11
         Day_2022_12
         Day_2022_13
+        Day_2022_14
     build-depends:
         parsec ^>=3.1.15.0,
         mtl >= 2.2 && < 2.4,
         comonad ^>= 5.0,
         ghc-prim ^>= 0.8,
         vector ^>= 0.12.3.1,
+        containers ^>= 0.6.5.1,
     -- Modules included in this library but not exported.
     other-modules:
         Sized
@@ -173,6 +175,15 @@ executable 2022-13
     build-depends:
         advent-of-code
 
+executable 2022-14
+    import:           commons
+
+    hs-source-dirs:   app
+    main-is:          2022-14.hs
+
+    build-depends:
+        advent-of-code
+
 test-suite advent-of-code-test
     import:           commons
 
@@ -182,5 +193,6 @@ test-suite advent-of-code-test
 
     build-depends:
         advent-of-code,
-        hspec >= 2.9.7 && < 2.11
+        hspec >= 2.9.7 && < 2.11,
+        containers ^>= 0.6.5.1,
 
