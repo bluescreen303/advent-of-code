@@ -4,6 +4,7 @@ module Main (main) where
 import Test.Hspec
 import Data.Either (isRight, fromRight)
 import Data.Maybe (fromJust)
+import qualified Data.Map.Strict as Map
 import Control.Arrow (second)
 import Control.Monad ((>=>), (<=<))
 import qualified Data.IntMap as IntMap
@@ -30,6 +31,7 @@ import Day_2022_13 (Tree(..))
 import qualified Day_2022_14
 import Day_2022_14 (Vertex (..), Path (..), pathSegments, VertBlock(..), Column(..))
 import qualified Day_2022_15
+import qualified Day_2022_16
 
 main :: IO ()
 main = hspec . parallel $ do
@@ -418,3 +420,23 @@ main = hspec . parallel $ do
             describe "main" . mapSubject (Day_2022_15.main 20) $ do
                 it "should produce the expected result" $ \result ->
                     result `shouldBe` Right (Just 56000011)
+
+    describe "2022-15" $ do
+        describe "with example input file" . before (getDataFileName "2022-16-example.txt" >>= readFile) $ do
+            let exampleInput = Map.fromList [ ("AA", Day_2022_16.ValveDef  0 ["DD","II","BB"])
+                                            , ("BB", Day_2022_16.ValveDef 13 ["CC","AA"])
+                                            , ("CC", Day_2022_16.ValveDef  2 ["DD","BB"])
+                                            , ("DD", Day_2022_16.ValveDef 20 ["CC","AA","EE"])
+                                            , ("EE", Day_2022_16.ValveDef  3 ["FF","DD"])
+                                            , ("FF", Day_2022_16.ValveDef  0 ["EE","GG"])
+                                            , ("GG", Day_2022_16.ValveDef  0 ["FF","HH"])
+                                            , ("HH", Day_2022_16.ValveDef 22 ["GG"])
+                                            , ("II", Day_2022_16.ValveDef  0 ["AA","JJ"])
+                                            , ("JJ", Day_2022_16.ValveDef 21 ["II"])
+                                            ]
+            describe "parse" . mapSubject Day_2022_16.parse $ do
+                it "should produce the example input" $ \result ->
+                    result `shouldBe` Right exampleInput
+            describe "main" . mapSubject Day_2022_16.main $ do
+                it "should produce the expected result" $ \result ->
+                    result `shouldBe` Right 1651
