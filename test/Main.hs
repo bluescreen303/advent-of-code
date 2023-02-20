@@ -415,6 +415,6 @@ main = hspec . parallel $ do
             describe "parse" . mapSubject Day_2022_15.parse $ do
                 it "should produce the example input" $ \result ->
                     result `shouldBe` Right exampleInput
-            describe "main" . mapSubject (Day_2022_15.main (Just 10)) $ do
+            describe "main" . mapSubject (Day_2022_15.main 20) $ do
                 it "should produce the expected result" $ \result ->
-                    result `shouldBe` Right 26
+                    result `shouldBe` Right (Just 56000011)

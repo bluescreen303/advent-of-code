@@ -6,9 +6,9 @@ import qualified Day_2022_15 as Lib
 main :: IO ()
 main = do
     (filePath, rest) <- argOr' 1 "2022-15-example.txt"
-    let mline = case rest of
-                  []    -> Nothing
-                  (x:_) -> Just (read x)
+    let m = case rest of
+                []    -> 20
+                (x:_) -> read x
     contents <- readFile filePath
 
-    print $ Lib.main mline contents
+    print $ Lib.main m contents
