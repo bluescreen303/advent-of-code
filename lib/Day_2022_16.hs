@@ -9,6 +9,7 @@ import qualified Data.Map.Strict as Map
 import Data.Map.Strict (Map, (!))
 import Data.Foldable (maximumBy)
 import Data.Function (on)
+import Control.Parallel.Strategies (withStrategy, parTraversable, rseq, Strategy, evalTraversable)
 
 -- input model
 
@@ -73,6 +74,7 @@ prune wss = wss \\ redundants
     where redundants = Set.unions
                      . map snd
                      . Map.toList
+                     . withStrategy (parTraversable evalWorldStates)
                      . fmap pruneStatesAtSameLocation
                      . foldr (\ws m -> Map.insertWith Set.union (myLocation ws, elephantLocation ws) (Set.singleton ws) m) Map.empty
                      $ wss
@@ -83,6 +85,10 @@ prune wss = wss \\ redundants
           madeRedundantBy :: WorldState -> WorldState -> Bool
           madeRedundantBy (WorldState _ _ ov1 pr1) (WorldState _ _ ov2 pr2) = pr1 <= pr2
                                                                            && ov1 `isSubsetOf` ov2
+          evalWorldStates :: Strategy (Set WorldState)
+          evalWorldStates s = do l <- evalTraversable rseq (Set.toList s)
+                                 s' <- rseq s
+                                 return (if length l > (-1) then s else s')
 
 step :: WorldMap -> Set WorldState -> Set WorldState
 step wm = prune . Set.unions . Set.map (validMoves wm . advance wm)

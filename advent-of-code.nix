@@ -1,5 +1,5 @@
-{ mkDerivation, base, comonad, ghc-prim, hspec, lib, mtl, parsec
-, vector
+{ mkDerivation, base, comonad, containers, ghc-prim, hspec, lib
+, mtl, parallel, parsec, vector
 }:
 mkDerivation {
   pname = "advent-of-code";
@@ -9,9 +9,9 @@ mkDerivation {
   isExecutable = true;
   enableSeparateDataOutput = true;
   libraryHaskellDepends = [
-    base comonad ghc-prim mtl parsec vector
+    base comonad containers ghc-prim mtl parallel parsec vector
   ];
   executableHaskellDepends = [ base ];
-  testHaskellDepends = [ base hspec ];
+  testHaskellDepends = [ base containers hspec ];
   license = lib.licenses.agpl3Plus;
 }

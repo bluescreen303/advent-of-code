@@ -439,4 +439,4 @@ main = hspec . parallel $ do
                     result `shouldBe` Right exampleInput
             describe "main" . mapSubject Day_2022_16.main $ do
                 it "should produce the expected result" $ \result ->
-                    result `shouldBe` Right 1651
+                    result `shouldBe` Right 1707

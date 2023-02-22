@@ -11,11 +11,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1675195512,
-        "narHash": "sha256-f0xQRK51Az2odLBCZ8WezJ4MgUk00+0Aiobsl/0LCEc=",
+        "lastModified": 1677227378,
+        "narHash": "sha256-C9SM7NbJ3rpxNdX/jBiaiwRwi7F4C9YUa4/j8osXXv0=",
         "ref": "refs/heads/master",
-        "rev": "6ccc2e4947601f9a336bd70c12f1945bcfe22f92",
-        "revCount": 438,
+        "rev": "7378de02736d402c9a76caca644ab72fb6fb725b",
+        "revCount": 439,
         "type": "git",
         "url": "http://mathijs@git.lan/bluenix"
       },
@@ -41,11 +41,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1676300157,
-        "narHash": "sha256-1HjRzfp6LOLfcj/HJHdVKWAkX9QRAouoh6AjzJiIerU=",
+        "lastModified": 1677063315,
+        "narHash": "sha256-qiB4ajTeAOVnVSAwCNEEkoybrAlA+cpeiBxLobHndE8=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "545c7a31e5dedea4a6d372712a18e00ce097d462",
+        "rev": "988cc958c57ce4350ec248d2d53087777f9e1949",
         "type": "github"
       },
       "original": {
@@ -74,11 +74,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1675132198,
-        "narHash": "sha256-izOVjdIfdv0OzcfO9rXX0lfGkQn4tdJ0eNm3P3LYo/o=",
+        "lastModified": 1677205778,
+        "narHash": "sha256-DFe09uzS+8LjGBAAyHkB/5Axs0j/PQ8RLWFzm2FUZLA=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "48b1403150c3f5a9aeee8bc4c77c8926f29c6501",
+        "rev": "b91706f9d5a68fecf97b63753da8e9670dff782b",
         "type": "github"
       },
       "original": {
