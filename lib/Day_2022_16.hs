@@ -32,6 +32,7 @@ parse = fmap Map.fromList . P.parse (parseValveDef `sepEndBy1` endOfLine) ""
 --
 
 data WorldState = WorldState { myLocation :: String
+                             , elephantLocation :: String
                              , openedValves :: Set String
                              , pressureReleased :: Int }
                              deriving (Eq, Show)
@@ -40,14 +41,26 @@ advance :: WorldMap -> WorldState -> WorldState
 advance wm ws = ws { pressureReleased = pressureReleased ws + increase }
     where increase = sum $ Set.map (\v -> valveFlowRate (wm ! v)) (openedValves ws)
 
-validMoves :: WorldMap -> WorldState -> Set WorldState
-validMoves wm ws@(WorldState l ov _) =
+myValidMoves :: WorldMap -> WorldState -> Set WorldState
+myValidMoves wm ws@(WorldState l _ ov _) =
     foldr (\l' s -> ws { myLocation = l' } `insert` s)
           (if l `notMember` ov && rate > 0 -- open a closed, non-zero valve
            then Set.singleton ws { openedValves = l `insert` ov }
            else Set.empty)
           connections -- move to any other connected location
     where ValveDef rate connections = wm ! l
+
+elephantValidMoves :: WorldMap -> WorldState -> Set WorldState
+elephantValidMoves wm ws@(WorldState _ e ov _) =
+    foldr (\e' s -> ws { elephantLocation = e' } `insert` s)
+          (if e `notMember` ov && rate > 0 -- open a closed, non-zero valve
+           then Set.singleton ws { openedValves = e `insert` ov }
+           else Set.empty)
+          connections -- move to any other connected location
+    where ValveDef rate connections = wm ! e
+
+validMoves :: WorldMap -> WorldState -> Set WorldState
+validMoves wm ws = Set.unions . Set.map (elephantValidMoves wm) $ myValidMoves wm ws
 
 -- it's hard to come up with a proper pruning strategy. Depending on the worldmap, visiting the same location multiple
 -- times may not be a bad idea (let's say there's a map with a central hub). Going back to where you came is also
@@ -61,29 +74,29 @@ prune wss = wss \\ redundants
                      . map snd
                      . Map.toList
                      . fmap pruneStatesAtSameLocation
-                     . foldr (\ws m -> Map.insertWith Set.union (myLocation ws) (Set.singleton ws) m) Map.empty
+                     . foldr (\ws m -> Map.insertWith Set.union (myLocation ws, elephantLocation ws) (Set.singleton ws) m) Map.empty
                      $ wss
 
           pruneStatesAtSameLocation :: Set WorldState -> Set WorldState
           pruneStatesAtSameLocation xs = Set.filter (\x -> any (x `madeRedundantBy`) $ Set.delete x xs) xs
 
           madeRedundantBy :: WorldState -> WorldState -> Bool
-          madeRedundantBy (WorldState _ ov1 pr1) (WorldState _ ov2 pr2) = pr1 <= pr2
-                                                                       && ov1 `isSubsetOf` ov2
+          madeRedundantBy (WorldState _ _ ov1 pr1) (WorldState _ _ ov2 pr2) = pr1 <= pr2
+                                                                           && ov1 `isSubsetOf` ov2
 
 step :: WorldMap -> Set WorldState -> Set WorldState
 step wm = prune . Set.unions . Set.map (validMoves wm . advance wm)
 
 play :: WorldMap -> [Set WorldState]
 play wm = iterate (step wm) (Set.singleton startState)
-    where startState = WorldState "AA" Set.empty 0
+    where startState = WorldState "AA" "AA" Set.empty 0
 
 main :: String -> Either ParseError Int
 main = fmap ( pressureReleased
             . maximumBy (compare `on` pressureReleased)
-            . (!! 30)
+            . (!! 26)
             . play )
      . parse
 
 instance Ord WorldState where
-    compare (WorldState l1 ov1 pr1) (WorldState l2 ov2 pr2) = compare (l1, pr2, ov2) (l2, pr1, ov1)
+    compare (WorldState l1 e1 ov1 pr1) (WorldState l2 e2 ov2 pr2) = compare (l1, e1, pr2, ov2) (l2, e2, pr1, ov1)
