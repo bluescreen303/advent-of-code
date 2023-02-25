@@ -423,17 +423,17 @@ main = hspec . parallel $ do
 
     describe "2022-15" $ do
         describe "with example input file" . before (getDataFileName "2022-16-example.txt" >>= readFile) $ do
-            let exampleInput = Map.fromList [ ("AA", Day_2022_16.ValveDef  0 ["DD","II","BB"])
-                                            , ("BB", Day_2022_16.ValveDef 13 ["CC","AA"])
-                                            , ("CC", Day_2022_16.ValveDef  2 ["DD","BB"])
-                                            , ("DD", Day_2022_16.ValveDef 20 ["CC","AA","EE"])
-                                            , ("EE", Day_2022_16.ValveDef  3 ["FF","DD"])
-                                            , ("FF", Day_2022_16.ValveDef  0 ["EE","GG"])
-                                            , ("GG", Day_2022_16.ValveDef  0 ["FF","HH"])
-                                            , ("HH", Day_2022_16.ValveDef 22 ["GG"])
-                                            , ("II", Day_2022_16.ValveDef  0 ["AA","JJ"])
-                                            , ("JJ", Day_2022_16.ValveDef 21 ["II"])
-                                            ]
+            let exampleInput = [ ("AA",  0, ["DD", "II", "BB"])
+                               , ("BB", 13, ["CC", "AA"])
+                               , ("CC",  2, ["DD", "BB"])
+                               , ("DD", 20, ["CC", "AA", "EE"])
+                               , ("EE",  3, ["FF", "DD"])
+                               , ("FF",  0, ["EE", "GG"])
+                               , ("GG",  0, ["FF", "HH"])
+                               , ("HH", 22, ["GG"])
+                               , ("II",  0, ["AA", "JJ"])
+                               , ("JJ", 21, ["II"])
+                               ]
             describe "parse" . mapSubject Day_2022_16.parse $ do
                 it "should produce the example input" $ \result ->
                     result `shouldBe` Right exampleInput
