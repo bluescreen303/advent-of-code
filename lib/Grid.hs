@@ -3,21 +3,22 @@
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE TypeFamilyDependencies #-}
 
-module Grid ( Grid, mkGrid, unGrid, append, Grid.zipWith
-            , SomeGrid(..), mkSomeGrid, toSomeGrid
+module Grid ( Grid, mkGrid, unGrid, append, Grid.zipWith, addDimension, findIndex
+            , SomeGrid, mkSomeGrid, toSomeGrid
             , grid2D, grid3D, north, south, east, west
+            , grid1D, grid2Ds
             , Layers(..), topLayer, toLayers, addLayer
             , Focus(..), mkFocus, mapFocus, value, values, setValue
             , move, walk, look
             ) where
 
 import Control.Comonad (Comonad(..))
-import Data.Type.Equality (TestEquality(testEquality))
+import Data.Type.Equality (TestEquality(testEquality), type (:~:) (Refl))
 import Data.Vector (Vector, (!))
 import qualified Data.Vector as V
 import Numeric.Natural ( Natural )
 import GHC.Natural (minusNaturalMaybe)
-import GHC.TypeLits (KnownNat, type (+))
+import GHC.TypeLits (KnownNat, type (+), sameNat)
 import TypeLevel
 import Sized (Indexed(..), Sized (..), Index, InputForm, Dim, pack, modIndex)
 
@@ -52,6 +53,12 @@ append (Grid v1) (Grid v2) = Grid $ v1 V.++ v2
 zipWith :: (a -> b -> c) -> Grid sx a -> Grid sx b -> Grid sx c
 zipWith fn (Grid v1) (Grid v2) = Grid (V.zipWith fn v1 v2)
 
+addDimension :: Grid '[x] (Grid y t) -> Grid (x ': y) t
+addDimension (Grid v) = Grid . V.concat . fmap (\(Grid x) -> x) . V.toList $ v
+
+findIndex :: Sized sx => (a -> Bool) -> Grid sx a -> Maybe (Index sx)
+findIndex p (Grid v) = unslice . fromIntegral <$> V.findIndex p v
+
 -- grids of size only known at runtime
 
 data SomeGrid t where
@@ -64,11 +71,19 @@ mkSomeGrid :: forall n t. Dim (P n) => InputForm (P n) t -> Maybe (SomeGrid t)
 mkSomeGrid input = do (Some dim, v) <- pack @(P n) @t input
                       return $ SomeGrid (Grid v) dim
 
--- 2D & 3D utils
+-- 1D, 2D & 3D utils
+
+grid1D :: (forall x. KnownNat x => Grid '[x] t -> r) -> SomeGrid t -> r
+grid1D fn (SomeGrid g (SNat :| Nil)) = fn g
+grid1D _  _                          = undefined
 
 grid2D :: (forall x y. (KnownNat x, KnownNat y) => Grid [y, x] t -> r) -> SomeGrid t -> r
 grid2D fn (SomeGrid g (SNat :| SNat :| Nil)) = fn g
 grid2D _  _                                  = undefined
+
+grid2Ds :: (forall x. KnownNat x => Grid [x, x] t -> r) -> SomeGrid t -> Maybe r
+grid2Ds fn (SomeGrid g (y@SNat :| x@SNat :| Nil)) | Just Refl <- sameNat y x = Just $ fn g
+grid2Ds _  _                                                                 = Nothing
 
 grid3D :: (forall x y z. (KnownNat x, KnownNat y, KnownNat z) => Grid [z, y, x] t -> r) -> SomeGrid t -> r
 grid3D fn (SomeGrid g (SNat :| SNat :| SNat :| Nil)) = fn g

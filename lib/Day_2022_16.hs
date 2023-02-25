@@ -1,108 +1,78 @@
-module Day_2022_16 (main, parse, ValveDef(..)) where
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE TypeFamilies #-}
+module Day_2022_16 (Valve(..), main, parse) where
 import qualified Text.Parsec as P
 import Text.Parsec hiding (parse)
-import Helpers (positiveNatural, symbol, lexeme, commaSep)
+import Helpers (positiveNatural, symbol, lexeme, commaSep, enum)
+import Data.Maybe (fromJust, fromMaybe)
+import Data.Foldable (find)
+import Grid (mkSomeGrid, Grid, grid1D, addDimension, findIndex)
+import GHC.TypeLits (KnownNat)
+import Sized (Indexed (set, get), Index, imap)
+import TypeLevel (HList(..), Finite, hHead)
+import Data.List (delete)
 
-import Data.Set (Set, notMember, insert, isSubsetOf, (\\))
-import qualified Data.Set as Set
-import qualified Data.Map.Strict as Map
-import Data.Map.Strict (Map, (!))
-import Data.Foldable (maximumBy)
-import Data.Function (on)
-import Control.Parallel.Strategies (withStrategy, parTraversable, rseq, Strategy, evalTraversable)
-
--- input model
-
-data ValveDef = ValveDef { valveFlowRate :: Int, valveConnections :: [String]} deriving (Eq, Show)
-type WorldMap = Map String ValveDef
 
 -- input parsing
 
 type Parser = Parsec String ()
+data Valve = Valve { valveName :: String
+                   , valveRate :: Int
+                   , valveConnections :: [String] }
+                   deriving (Eq, Show)
 
-parseValveDef :: Parser (String, ValveDef)
-parseValveDef = (,) <$> (symbol "Valve" *> lexeme (many1 upper))
-                    <*> (ValveDef <$ symbol "has flow rate=" <*> positiveNatural <* symbol ";"
-                                  <* symbol' "tunnel" <* symbol' "lead" <* symbol "to" <* symbol' "valve"
-                                  <*> commaSep (many1 upper))
+parseValve :: Parser Valve
+parseValve = Valve <$> (symbol "Valve" *> lexeme (many1 upper))
+                   <*> (symbol "has flow rate=" *> positiveNatural <* symbol ";")
+                   <*> (symbol' "tunnel" *> symbol' "lead" *> symbol "to" *> symbol' "valve" *> commaSep (many1 upper))
     where symbol' x = lexeme (string x <* optional (char 's'))
 
-parse :: String -> Either ParseError WorldMap
-parse = fmap Map.fromList . P.parse (parseValveDef `sepEndBy1` endOfLine) ""
+parse :: String -> Either ParseError [Valve]
+parse = P.parse (parseValve `sepEndBy1` endOfLine) ""
 
---
+data Puzzle x = Puzzle { rates       :: Grid '[x] Int
+                       , connections :: Grid '[x, x] (Maybe Int)
+                       , startPos    :: Finite x
+                       }
 
-data WorldState = WorldState { myLocation :: String
-                             , elephantLocation :: String
-                             , openedValves :: Set String
-                             , pressureReleased :: Int }
-                             deriving (Eq, Show)
+floydWarshall :: forall x t. (KnownNat x, Num t, Ord t) => Grid [x, x] (Maybe t) -> Grid [x, x] (Maybe t)
+floydWarshall initial = foldr go initial ((,,) <$> enum <*> enum <*> enum)
+    where go :: (Finite x, Finite x, Finite x) -> Grid '[x, x] (Maybe t) -> Grid '[x, x] (Maybe t)
+          go (k, i, j) m = case (get (ii i k) m, get (ii k j) m, get (ii i j) m) of
+                             (Just a, Just b, Nothing)      -> set (Just $ a + b) (ii i j) m
+                             (Just a, Just b, Just current) -> set (Just $ min current (a + b)) (ii i j) m
+                             _                              -> m
+          ii :: Finite x -> Finite y -> Index [x, y]
+          ii a b = a :| b :| Nil
 
-advance :: WorldMap -> WorldState -> WorldState
-advance wm ws = ws { pressureReleased = pressureReleased ws + increase }
-    where increase = sum $ Set.map (\v -> valveFlowRate (wm ! v)) (openedValves ws)
+search :: forall x. KnownNat x => Bool -> Int -> Puzzle x -> Int
+search withElephant maxTime (Puzzle rates connections startPos) = go withElephant maxTime startPos initialTodo
+    where initialTodo = filter (\i -> get (i :| Nil) rates > 0) enum
+          go :: Bool -> Int -> Finite x -> [Finite x] -> Int
+          go el timeLeft currentLoc todo
+              = maximum
+              . (:) (if el then go False 26 startPos todo else 0)
+              . map (\v -> let t = timeLeft - fromJust (get (currentLoc :| v :| Nil) connections) - 1
+                           in get (v :| Nil) rates * t + go el t v (delete v todo))
+              . filter (\v -> maybe False (< timeLeft) (get (currentLoc :| v :| Nil) connections))
+              $ todo
 
-myValidMoves :: WorldMap -> WorldState -> Set WorldState
-myValidMoves wm ws@(WorldState l _ ov _) =
-    foldr (\l' s -> ws { myLocation = l' } `insert` s)
-          (if l `notMember` ov && rate > 0 -- open a closed, non-zero valve
-           then Set.singleton ws { openedValves = l `insert` ov }
-           else Set.empty)
-          connections -- move to any other connected location
-    where ValveDef rate connections = wm ! l
+typedMain :: KnownNat x => Grid '[x] Valve -> (Int, Int)
+typedMain valves = (search False 30 puzzle, search True 26 puzzle)
+    where go (Valve _ _ cs) = imap (\i _ -> 1 <$ find (\c -> findIndex ((==c) . valveName) valves == Just i) cs) valves
+          puzzle            = Puzzle { rates       = fmap valveRate valves
+                                     , connections = floydWarshall . addDimension . fmap go $ valves
+                                     , startPos    = hHead . fromMaybe (error "no valve named 'AA'")
+                                                   . findIndex (\v -> valveName v == "AA") $ valves }
 
-elephantValidMoves :: WorldMap -> WorldState -> Set WorldState
-elephantValidMoves wm ws@(WorldState _ e ov _) =
-    foldr (\e' s -> ws { elephantLocation = e' } `insert` s)
-          (if e `notMember` ov && rate > 0 -- open a closed, non-zero valve
-           then Set.singleton ws { openedValves = e `insert` ov }
-           else Set.empty)
-          connections -- move to any other connected location
-    where ValveDef rate connections = wm ! e
+main :: String -> Either ParseError (Int, Int)
+main = fmap (grid1D typedMain . valveGrid) . parse
+    where valveGrid = fromMaybe (error "impossible: one-dimensional list should always be valid!")
+                    . mkSomeGrid @1
 
-validMoves :: WorldMap -> WorldState -> Set WorldState
-validMoves wm ws = Set.unions . Set.map (elephantValidMoves wm) $ myValidMoves wm ws
+-- floydWarshall' :: (Ord a, Num b, Ord b) => [a] -> Map (a, a) b -> Map (a, a) b
+-- floydWarshall' xs initial = foldr go initial ((,,) <$> xs <*> xs <*> xs)
+--     where go (k, i, j) m = maybe m
+--                                  (\b -> Map.insertWith min (i, j) b m)
+--                                  ((+) <$> (m !? (i, k)) <*> (m !? (k, j)))
 
--- it's hard to come up with a proper pruning strategy. Depending on the worldmap, visiting the same location multiple
--- times may not be a bad idea (let's say there's a map with a central hub). Going back to where you came is also
--- a valid move in such a situation. Opening far less valves than others may not be bad either. Perhaps it's the only
--- way to get to a far-off valve which would instantly release all pressure.
--- So the chosen strategy is to prune states that are at the same location as others, with only a subset of valves
--- opened, with less pressure released.
-prune :: Set WorldState -> Set WorldState
-prune wss = wss \\ redundants
-    where redundants = Set.unions
-                     . map snd
-                     . Map.toList
-                     . withStrategy (parTraversable evalWorldStates)
-                     . fmap pruneStatesAtSameLocation
-                     . foldr (\ws m -> Map.insertWith Set.union (myLocation ws, elephantLocation ws) (Set.singleton ws) m) Map.empty
-                     $ wss
-
-          pruneStatesAtSameLocation :: Set WorldState -> Set WorldState
-          pruneStatesAtSameLocation xs = Set.filter (\x -> any (x `madeRedundantBy`) $ Set.delete x xs) xs
-
-          madeRedundantBy :: WorldState -> WorldState -> Bool
-          madeRedundantBy (WorldState _ _ ov1 pr1) (WorldState _ _ ov2 pr2) = pr1 <= pr2
-                                                                           && ov1 `isSubsetOf` ov2
-          evalWorldStates :: Strategy (Set WorldState)
-          evalWorldStates s = do l <- evalTraversable rseq (Set.toList s)
-                                 s' <- rseq s
-                                 return (if length l > (-1) then s else s')
-
-step :: WorldMap -> Set WorldState -> Set WorldState
-step wm = prune . Set.unions . Set.map (validMoves wm . advance wm)
-
-play :: WorldMap -> [Set WorldState]
-play wm = iterate (step wm) (Set.singleton startState)
-    where startState = WorldState "AA" "AA" Set.empty 0
-
-main :: String -> Either ParseError Int
-main = fmap ( pressureReleased
-            . maximumBy (compare `on` pressureReleased)
-            . (!! 26)
-            . play )
-     . parse
-
-instance Ord WorldState where
-    compare (WorldState l1 e1 ov1 pr1) (WorldState l2 e2 ov2 pr2) = compare (l1, e1, pr2, ov2) (l2, e2, pr1, ov1)

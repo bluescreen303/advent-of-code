@@ -5,6 +5,7 @@
 {-# LANGUAGE MagicHash #-}
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE PatternSynonyms #-}
+{-# LANGUAGE QuantifiedConstraints #-}
 
 module TypeLevel ( Some(..)
                  , Some2(..)
@@ -20,6 +21,7 @@ module TypeLevel ( Some(..)
                  , pattern I, pattern II, pattern III
                  , pattern (::|)
                  , NList
+                 , hHead
                  , promoteNatList
                  , ModifyElement(..)
                  , GetEl
@@ -34,7 +36,7 @@ import GHC.TypeLits (KnownNat, type (-), type (*), sameNat, natVal', SomeNat (So
 import Data.Type.Equality (TestEquality (testEquality), type (:~:) (Refl))
 import Data.Functor.Identity (Identity(..))
 import GHC.Exts (proxy#)
-import Data.Maybe (isJust, fromJust)
+import Data.Maybe (isJust, fromJust, fromMaybe)
 
 data Some c where
     Some :: c t -> Some c
@@ -56,6 +58,15 @@ type family P (n :: Natural) :: Peano where
 
 newtype Finite (n :: Natural) where
     Finite :: Natural -> Finite n
+  deriving (Show, Eq, Ord)
+
+instance KnownNat n => Bounded (Finite n) where
+    minBound = Finite 0
+    maxBound = Finite . fromIntegral . pred $ natVal' @n proxy#
+
+instance KnownNat n => Enum (Finite n) where
+    fromEnum (Finite n) = fromIntegral n
+    toEnum = fromMaybe (error "Prelude.Enum.Finite.toEnum: bad argument") . finite . fromIntegral
 
 getFin :: Finite n -> Natural
 getFin (Finite n) = n
@@ -94,6 +105,8 @@ pattern II a b = Identity a :| Identity b :| Nil
 pattern III :: a -> b -> c -> IList [a, b, c]
 pattern III a b c = Identity a :| Identity b :| Identity c :| Nil
 
+deriving instance (forall t. Eq (c t)) => Eq (HList c ts)
+
 instance TestEquality c => TestEquality (HList c) where
     testEquality Nil       Nil       = Just Refl
     testEquality (a :| as) (b :| bs) =
@@ -107,6 +120,9 @@ instance Singular (HList c) '[] where
 
 instance (Singular c x, Singular (HList c) xs) => Singular (HList c) (x ': xs) where
     singular = singular :| singular
+
+hHead :: HList f (x ': xs) -> f x
+hHead (x :| _) = x
 
 promoteNatList :: [Natural] -> Some NList
 promoteNatList []     = Some Nil

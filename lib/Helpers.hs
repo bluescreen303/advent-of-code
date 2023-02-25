@@ -6,6 +6,7 @@ module Helpers ( argOr, argOr'
                , merge
                , mergeAll
                , without
+               , enum
                , lexeme
                , parens
                , positiveNatural
@@ -82,6 +83,9 @@ without xxs@(x:xs) yys@(y:ys) = case x `compare` y of
     LT -> x : without xs yys
     EQ -> without xs ys
     GT -> without xxs ys
+
+enum :: (Bounded a, Enum a) => [a]
+enum = enumFromTo minBound maxBound
 
 -- parsing utilities
 
