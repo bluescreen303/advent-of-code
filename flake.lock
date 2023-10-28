@@ -11,12 +11,13 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "dirtyRev": "a4684f1d72f647a51c903393be987f369c0615a0-dirty",
-        "dirtyShortRev": "a4684f1-dirty",
         "lastModified": 1697180776,
-        "narHash": "sha256-xicBvTq94fT3XzZRidtL3d7L1XsyVTZZiGlnm6GmWQU=",
+        "narHash": "sha256-qETsOXUs2lTvuoNHvxcQZVm3HdIz8s6f9bIoANpnaro=",
+        "ref": "refs/heads/master",
+        "rev": "a4684f1d72f647a51c903393be987f369c0615a0",
+        "revCount": 455,
         "type": "git",
-        "url": "file:///home/mathijs/Projects/bluenix"
+        "url": "http://mathijs@git.lan/bluenix"
       },
       "original": {
         "type": "git",
@@ -76,11 +77,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1698458995,
-        "narHash": "sha256-nF8E8Ur5NggwPQNp3w/fddWmQrNEwCm0dgz6tk8Ew6E=",
+        "lastModified": 1697163235,
+        "narHash": "sha256-HzGr9LbTKf8x4NeDH94i1J2Cq/0CY1Qrt4z5pETk9HA=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "571fee291b386dd6fe0d125bc20a7c7b3ad042ac",
+        "rev": "b48a7e5dab1b472dd9c9ee9053401489dbb4d6fc",
         "type": "github"
       },
       "original": {
