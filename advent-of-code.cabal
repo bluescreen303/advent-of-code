@@ -11,7 +11,7 @@ maintainer:         mathijs@bluescreen303.nl
 build-type:         Simple
 extra-doc-files:    CHANGELOG.md
 data-dir:           data/
-data-files:         2022/*.txt
+data-files:         **/*.txt
 
 -- Extra source files to be distributed with the package, such as examples, or a tutorial module.
 -- extra-source-files:
@@ -48,6 +48,7 @@ library
         Year2022.Day14
         Year2022.Day15
         Year2022.Day16
+        Year2023.Day01
     build-depends:
         parsec ^>=3.1.15.0,
         mtl >= 2.2 && < 2.4,
@@ -207,6 +208,15 @@ executable 2022-16
     build-depends:
         advent-of-code
 
+executable 2023-01
+    import:           commons
+
+    hs-source-dirs:   app/2023
+    main-is:          01.hs
+
+    build-depends:
+        advent-of-code
+
 test-suite advent-of-code-2022
     import:           commons
 
@@ -219,3 +229,13 @@ test-suite advent-of-code-2022
         hspec >= 2.9.7 && < 2.11,
         containers ^>= 0.6.5.1,
 
+test-suite advent-of-code-2023
+    import:           commons
+
+    hs-source-dirs:   test
+    type:             exitcode-stdio-1.0
+    main-is:          2023.hs
+
+    build-depends:
+        advent-of-code,
+        hspec >= 2.9.7 && < 2.11,
