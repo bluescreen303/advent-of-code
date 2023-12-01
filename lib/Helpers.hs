@@ -19,6 +19,7 @@ module Helpers ( argOr, argOr'
 
 import Paths_advent_of_code (getDataFileName)
 import System.Environment (getArgs)
+import System.FilePath (joinPath)
 import Text.Parsec
 import Data.List (foldl')
 import Data.Char (digitToInt)
@@ -36,15 +37,15 @@ splitAtEmpty l = case break (== "") l of
 grouped :: String -> [(Integer, [String])]
 grouped = zip [0..] . splitAtEmpty . lines
 
-argOr :: FilePath -> IO String
-argOr = fmap fst . argOr' 0
+argOr :: Int -> FilePath -> IO String
+argOr year = fmap fst . argOr' 0 year
 
-argOr' :: Int -> FilePath -> IO (String, [String])
-argOr' skip dataFileName = do
+argOr' :: Int -> Int -> FilePath -> IO (String, [String])
+argOr' skip year dataFileName = do
     (otherArgs, fileArgs) <- splitAt skip <$> getArgs
     case fileArgs of
         [f] -> return (f, otherArgs)
-        _   -> (,otherArgs) <$> getDataFileName dataFileName
+        _   -> (,otherArgs) <$> getDataFileName (joinPath [show year, dataFileName])
 
 splitOn :: Eq a => a -> [a] -> [[a]]
 splitOn n xs = case break (== n) xs of

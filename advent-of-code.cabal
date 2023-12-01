@@ -1,6 +1,6 @@
 cabal-version:      3.0
 name:               advent-of-code
-version:            2022.0.0.1
+version:            2023.0.0.1
 -- synopsis:
 -- description:
 license:            AGPL-3.0-or-later
@@ -11,7 +11,7 @@ maintainer:         mathijs@bluescreen303.nl
 build-type:         Simple
 extra-doc-files:    CHANGELOG.md
 data-dir:           data/
-data-files:         *.txt
+data-files:         2022/*.txt
 
 -- Extra source files to be distributed with the package, such as examples, or a tutorial module.
 -- extra-source-files:
@@ -21,7 +21,8 @@ common commons
     default-language: GHC2021
     other-modules:    Paths_advent_of_code
     build-depends:
-        base >= 4.16.3.0 && < 4.19
+        base >= 4.16.3.0 && < 4.19,
+        filepath >= 1.4.0.0 && < 1.5,
 
 library
     import:           commons
@@ -31,22 +32,22 @@ library
         Grid
         Helpers
         TypeLevel
-        Day_2022_01
-        Day_2022_02
-        Day_2022_03
-        Day_2022_04
-        Day_2022_05
-        Day_2022_06
-        Day_2022_07
-        Day_2022_08
-        Day_2022_09
-        Day_2022_10
-        Day_2022_11
-        Day_2022_12
-        Day_2022_13
-        Day_2022_14
-        Day_2022_15
-        Day_2022_16
+        Year2022.Day01
+        Year2022.Day02
+        Year2022.Day03
+        Year2022.Day04
+        Year2022.Day05
+        Year2022.Day06
+        Year2022.Day07
+        Year2022.Day08
+        Year2022.Day09
+        Year2022.Day10
+        Year2022.Day11
+        Year2022.Day12
+        Year2022.Day13
+        Year2022.Day14
+        Year2022.Day15
+        Year2022.Day16
     build-depends:
         parsec ^>=3.1.15.0,
         mtl >= 2.2 && < 2.4,
@@ -64,7 +65,7 @@ library
 executable 2022-01
     import:           commons
 
-    hs-source-dirs:   app
+    hs-source-dirs:   app/2022
     main-is:          2022-01.hs
 
     build-depends:
@@ -73,7 +74,7 @@ executable 2022-01
 executable 2022-02
     import:           commons
 
-    hs-source-dirs:   app
+    hs-source-dirs:   app/2022
     main-is:          2022-02.hs
 
     build-depends:
@@ -82,7 +83,7 @@ executable 2022-02
 executable 2022-03
     import:           commons
 
-    hs-source-dirs:   app
+    hs-source-dirs:   app/2022
     main-is:          2022-03.hs
 
     build-depends:
@@ -91,7 +92,7 @@ executable 2022-03
 executable 2022-04
     import:           commons
 
-    hs-source-dirs:   app
+    hs-source-dirs:   app/2022
     main-is:          2022-04.hs
 
     build-depends:
@@ -100,7 +101,7 @@ executable 2022-04
 executable 2022-05
     import:           commons
 
-    hs-source-dirs:   app
+    hs-source-dirs:   app/2022
     main-is:          2022-05.hs
 
     build-depends:
@@ -109,7 +110,7 @@ executable 2022-05
 executable 2022-06
     import:           commons
 
-    hs-source-dirs:   app
+    hs-source-dirs:   app/2022
     main-is:          2022-06.hs
 
     build-depends:
@@ -118,7 +119,7 @@ executable 2022-06
 executable 2022-07
     import:           commons
 
-    hs-source-dirs:   app
+    hs-source-dirs:   app/2022
     main-is:          2022-07.hs
 
     build-depends:
@@ -127,7 +128,7 @@ executable 2022-07
 executable 2022-08
     import:           commons
 
-    hs-source-dirs:   app
+    hs-source-dirs:   app/2022
     main-is:          2022-08.hs
 
     build-depends:
@@ -136,7 +137,7 @@ executable 2022-08
 executable 2022-09
     import:           commons
 
-    hs-source-dirs:   app
+    hs-source-dirs:   app/2022
     main-is:          2022-09.hs
 
     build-depends:
@@ -145,7 +146,7 @@ executable 2022-09
 executable 2022-10
     import:           commons
 
-    hs-source-dirs:   app
+    hs-source-dirs:   app/2022
     main-is:          2022-10.hs
 
     build-depends:
@@ -154,7 +155,7 @@ executable 2022-10
 executable 2022-11
     import:           commons
 
-    hs-source-dirs:   app
+    hs-source-dirs:   app/2022
     main-is:          2022-11.hs
 
     build-depends:
@@ -163,7 +164,7 @@ executable 2022-11
 executable 2022-12
     import:           commons
 
-    hs-source-dirs:   app
+    hs-source-dirs:   app/2022
     main-is:          2022-12.hs
 
     build-depends:
@@ -172,7 +173,7 @@ executable 2022-12
 executable 2022-13
     import:           commons
 
-    hs-source-dirs:   app
+    hs-source-dirs:   app/2022
     main-is:          2022-13.hs
 
     build-depends:
@@ -181,7 +182,7 @@ executable 2022-13
 executable 2022-14
     import:           commons
 
-    hs-source-dirs:   app
+    hs-source-dirs:   app/2022
     main-is:          2022-14.hs
 
     build-depends:
@@ -190,7 +191,7 @@ executable 2022-14
 executable 2022-15
     import:           commons
 
-    hs-source-dirs:   app
+    hs-source-dirs:   app/2022
     main-is:          2022-15.hs
 
     build-depends:
@@ -200,18 +201,18 @@ executable 2022-16
     import:           commons
     ghc-options:      -threaded
 
-    hs-source-dirs:   app
+    hs-source-dirs:   app/2022
     main-is:          2022-16.hs
 
     build-depends:
         advent-of-code
 
-test-suite advent-of-code-test
+test-suite advent-of-code-2022
     import:           commons
 
     hs-source-dirs:   test
     type:             exitcode-stdio-1.0
-    main-is:          Main.hs
+    main-is:          2022.hs
 
     build-depends:
         advent-of-code,

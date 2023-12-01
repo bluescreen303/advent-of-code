@@ -1,27 +1,137 @@
 {
   "nodes": {
-    "bluenix": {
+    "advent-of-code": {
       "inputs": {
+        "bluenix": [
+          "bluenix"
+        ],
         "flake-utils": [
+          "bluenix",
           "flake-utils"
         ],
         "nixpkgs": [
+          "bluenix",
           "nixpkgs"
-        ],
-        "rust-overlay": "rust-overlay"
+        ]
       },
       "locked": {
-        "lastModified": 1697180776,
-        "narHash": "sha256-qETsOXUs2lTvuoNHvxcQZVm3HdIz8s6f9bIoANpnaro=",
+        "lastModified": 1698485658,
+        "narHash": "sha256-CRErvCH0TfEsE0Uq9VhecvrbnnLeiRnDV6F52cs40Zk=",
         "ref": "refs/heads/master",
-        "rev": "a4684f1d72f647a51c903393be987f369c0615a0",
-        "revCount": 455,
+        "rev": "be3a1ee937cc2455dc93768dd08c0926d969bab3",
+        "revCount": 47,
+        "type": "git",
+        "url": "http://mathijs@git.lan/advent-of-code"
+      },
+      "original": {
+        "type": "git",
+        "url": "http://mathijs@git.lan/advent-of-code"
+      }
+    },
+    "bluenix": {
+      "inputs": {
+        "advent-of-code": "advent-of-code",
+        "bluenix-secrets": "bluenix-secrets",
+        "blueprint-parser": "blueprint-parser",
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "git-svc": "git-svc",
+        "nixos-wsl": "nixos-wsl",
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "pgp2neo": "pgp2neo",
+        "plfa": "plfa",
+        "rust-overlay": "rust-overlay",
+        "rust-wasi-tutorial": "rust-wasi-tutorial",
+        "shelly-playground": "shelly-playground",
+        "singletons-playground": "singletons-playground",
+        "thinking-with-types": "thinking-with-types"
+      },
+      "locked": {
+        "lastModified": 1700859905,
+        "narHash": "sha256-GSNAjVYfVMNbU/T0GeCLkMs4D4h4eyJ8tV98NHx9rqI=",
+        "rev": "127810f8b496e18d7a20a3979b17538438346cbd",
+        "revCount": 634,
         "type": "git",
         "url": "http://mathijs@git.lan/bluenix"
       },
       "original": {
         "type": "git",
         "url": "http://mathijs@git.lan/bluenix"
+      }
+    },
+    "bluenix-secrets": {
+      "inputs": {
+        "bluenix": [
+          "bluenix"
+        ],
+        "flake-utils": [
+          "bluenix",
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "bluenix",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1671400782,
+        "narHash": "sha256-Gxcy8tNlbF9CPRvEnPglXMwFKyT9r0KcKGKPcGFKKqs=",
+        "ref": "refs/heads/master",
+        "rev": "3f8fc0720b851c5d7a6b1085f89dd1eed9f062dc",
+        "revCount": 12,
+        "type": "git",
+        "url": "http://mathijs@git.lan/bluenix-secrets"
+      },
+      "original": {
+        "type": "git",
+        "url": "http://mathijs@git.lan/bluenix-secrets"
+      }
+    },
+    "blueprint-parser": {
+      "inputs": {
+        "bluenix": [
+          "bluenix"
+        ],
+        "flake-utils": [
+          "bluenix",
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "bluenix",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1698515264,
+        "narHash": "sha256-dxUWRMaMyij0iuDvbGOQ0diOT9+oOqFyiXRlMTmEJVw=",
+        "ref": "refs/heads/master",
+        "rev": "e17b5b66f14ad74b06bdae105c04990cb2326374",
+        "revCount": 16,
+        "type": "git",
+        "url": "http://mathijs@git.lan/blueprint-parser"
+      },
+      "original": {
+        "type": "git",
+        "url": "http://mathijs@git.lan/blueprint-parser"
+      }
+    },
+    "flake-compat": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1696426674,
+        "narHash": "sha256-kvjfFW7WAETZlt09AgDn1MrtKzP7t90Vf7vypd3OL1U=",
+        "owner": "edolstra",
+        "repo": "flake-compat",
+        "rev": "0f9255e01c2351cc7d116c072cb317785dd33b33",
+        "type": "github"
+      },
+      "original": {
+        "owner": "edolstra",
+        "repo": "flake-compat",
+        "type": "github"
       }
     },
     "flake-utils": {
@@ -42,13 +152,60 @@
         "type": "github"
       }
     },
+    "git-svc": {
+      "inputs": {
+        "nixpkgs": [
+          "bluenix",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1696013706,
+        "narHash": "sha256-cXzmzl9ByHh5X23r4LhMkD+yIv1IHMSWgYCS6JCzbYI=",
+        "ref": "refs/heads/master",
+        "rev": "c147b0f182ac7eae318a6e278e564c5bbb7663b0",
+        "revCount": 28,
+        "type": "git",
+        "url": "http://mathijs@git.lan/git-svc"
+      },
+      "original": {
+        "type": "git",
+        "url": "http://mathijs@git.lan/git-svc"
+      }
+    },
+    "nixos-wsl": {
+      "inputs": {
+        "flake-compat": "flake-compat",
+        "flake-utils": [
+          "bluenix",
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "bluenix",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1701337770,
+        "narHash": "sha256-f9fGlcnYcmIDMTg4Var9/dvxNtczmFgWp0tDebGcJp4=",
+        "owner": "nix-community",
+        "repo": "NixOS-WSL",
+        "rev": "c9d56ccb79ca47d42d3bf66faf6227411a5b01e6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "NixOS-WSL",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1698318101,
-        "narHash": "sha256-gUihHt3yPD7bVqg+k/UVHgngyaJ3DMEBchbymBMvK1E=",
+        "lastModified": 1700612854,
+        "narHash": "sha256-yrQ8osMD+vDLGFX7pcwsY/Qr5PUd6OmDMYJZzZi0+zc=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "63678e9f3d3afecfeafa0acead6239cdb447574c",
+        "rev": "19cbff58383a4ae384dea4d1d0c823d72b49d614",
         "type": "github"
       },
       "original": {
@@ -56,6 +213,66 @@
         "ref": "nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
+      }
+    },
+    "pgp2neo": {
+      "inputs": {
+        "bluenix": [
+          "bluenix"
+        ],
+        "flake-utils": [
+          "bluenix",
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "bluenix",
+          "nixpkgs"
+        ],
+        "rust-overlay": [
+          "bluenix",
+          "rust-overlay"
+        ]
+      },
+      "locked": {
+        "lastModified": 1659043242,
+        "narHash": "sha256-G35JTvYlboXwxs8oo0+0YsQFE8euiBcATM8XcTe0ROw=",
+        "ref": "refs/heads/master",
+        "rev": "232566f7ff63100f4b8074c2cfe3aace8ed82955",
+        "revCount": 12,
+        "type": "git",
+        "url": "http://mathijs@git.lan/pgp2neo"
+      },
+      "original": {
+        "type": "git",
+        "url": "http://mathijs@git.lan/pgp2neo"
+      }
+    },
+    "plfa": {
+      "inputs": {
+        "bluenix": [
+          "bluenix"
+        ],
+        "flake-utils": [
+          "bluenix",
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "bluenix",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1698514633,
+        "narHash": "sha256-99zr051opLNpg2JO/ueFeMSFnVqYPPT8R1kLYlXXFi4=",
+        "ref": "refs/heads/master",
+        "rev": "b040cb831b58e4726dcef8951c7a0aed270eff37",
+        "revCount": 18,
+        "type": "git",
+        "url": "http://mathijs@git.lan/plfa"
+      },
+      "original": {
+        "type": "git",
+        "url": "http://mathijs@git.lan/plfa"
       }
     },
     "root": {
@@ -77,17 +294,105 @@
         ]
       },
       "locked": {
-        "lastModified": 1697163235,
-        "narHash": "sha256-HzGr9LbTKf8x4NeDH94i1J2Cq/0CY1Qrt4z5pETk9HA=",
+        "lastModified": 1698631970,
+        "narHash": "sha256-uO+iqGslP1TdH0q3pMkpo6XHtzoEa6bjjF3dEQJSDcc=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "b48a7e5dab1b472dd9c9ee9053401489dbb4d6fc",
+        "rev": "44210df7a70dcf0a81a5919f9422b6ae589ee673",
         "type": "github"
       },
       "original": {
         "owner": "oxalica",
         "repo": "rust-overlay",
         "type": "github"
+      }
+    },
+    "rust-wasi-tutorial": {
+      "inputs": {
+        "bluenix": [
+          "bluenix"
+        ],
+        "flake-utils": [
+          "bluenix",
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "bluenix",
+          "nixpkgs"
+        ],
+        "rust-overlay": [
+          "bluenix",
+          "rust-overlay"
+        ]
+      },
+      "locked": {
+        "lastModified": 1698482696,
+        "narHash": "sha256-wndaNfU2l+5GOewQ7oXVdlw+httHyhvnFvz9ru40uxE=",
+        "ref": "refs/heads/master",
+        "rev": "10365f05709c2ff3b35930fa0439a204ead90f4d",
+        "revCount": 19,
+        "type": "git",
+        "url": "http://mathijs@git.lan/rust-wasi-tutorial"
+      },
+      "original": {
+        "type": "git",
+        "url": "http://mathijs@git.lan/rust-wasi-tutorial"
+      }
+    },
+    "shelly-playground": {
+      "inputs": {
+        "bluenix": [
+          "bluenix"
+        ],
+        "flake-utils": [
+          "bluenix",
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "bluenix",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1698514537,
+        "narHash": "sha256-TUG3B27yIn9FS6MlASkOmcchG/K3Xbp3j65JqNYCvds=",
+        "ref": "refs/heads/master",
+        "rev": "6e8e76fcf41d74b2a07ba178defac10e9cd5df03",
+        "revCount": 10,
+        "type": "git",
+        "url": "http://mathijs@git.lan/shelly-playground"
+      },
+      "original": {
+        "type": "git",
+        "url": "http://mathijs@git.lan/shelly-playground"
+      }
+    },
+    "singletons-playground": {
+      "inputs": {
+        "bluenix": [
+          "bluenix"
+        ],
+        "flake-utils": [
+          "bluenix",
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "bluenix",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1698516767,
+        "narHash": "sha256-AjVzy779hn1czt4Ey7jkdgFIaIiVND7f+icYUgfLLTA=",
+        "ref": "refs/heads/master",
+        "rev": "a1fbc2110da38d7a5e3a2691aa7bfc3403c9a908",
+        "revCount": 17,
+        "type": "git",
+        "url": "http://mathijs@git.lan/singletons-playground"
+      },
+      "original": {
+        "type": "git",
+        "url": "http://mathijs@git.lan/singletons-playground"
       }
     },
     "systems": {
@@ -103,6 +408,34 @@
         "owner": "nix-systems",
         "repo": "default",
         "type": "github"
+      }
+    },
+    "thinking-with-types": {
+      "inputs": {
+        "bluenix": [
+          "bluenix"
+        ],
+        "flake-utils": [
+          "bluenix",
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "bluenix",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1698514712,
+        "narHash": "sha256-eHb85og3Uursl3bN7XvKfThHpTBzDJHu6F98i0uVipc=",
+        "ref": "refs/heads/master",
+        "rev": "e95f320db9c5dcc35c8fd3008b70181f127036fd",
+        "revCount": 44,
+        "type": "git",
+        "url": "http://mathijs@git.lan/thinking-with-types"
+      },
+      "original": {
+        "type": "git",
+        "url": "http://mathijs@git.lan/thinking-with-types"
       }
     }
   },
