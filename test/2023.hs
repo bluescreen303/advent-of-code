@@ -5,6 +5,9 @@ import Test.Hspec
 import System.FilePath (joinPath)
 import qualified Paths_advent_of_code (getDataFileName)
 import qualified Year2023.Day01 as Day01
+import qualified Year2023.Day02 as Day02
+import Data.Either (isRight)
+import Helpers (doParse)
 
 getDataFileName :: FilePath -> IO FilePath
 getDataFileName x = Paths_advent_of_code.getDataFileName $ joinPath ["2023", x]
@@ -47,3 +50,17 @@ main = hspec . parallel $ do
                 describe "result" . mapSubject (Day01.main True) $ do
                     it "should be 281" $ \result ->
                         result `shouldBe` 281
+
+    describe "2023-02" $ do
+        describe "with the example input" . before (getDataFileName "02-example.txt" >>= readFile) $ do
+            describe "the parser" . mapSubject (doParse Day02.parser) $ do
+                it "should succeed" $ \result ->
+                    result `shouldSatisfy` isRight
+            describe "the first puzzle" $ do
+                describe "result" . mapSubject (Day02.main False) $ do
+                    it "should be 8" $ \result ->
+                        result `shouldBe` Right 8
+            describe "the second puzzle" $ do
+                describe "result" . mapSubject (Day02.main True) $ do
+                    it "should be 8" $ \result ->
+                        result `shouldBe` Right 2286

@@ -1,4 +1,5 @@
-module Helpers ( argOr, argOr'
+module Helpers ( Parser
+               , argOr, argOr'
                , binary
                , commaSep
                , divisible
@@ -7,15 +8,19 @@ module Helpers ( argOr, argOr'
                , mergeAll
                , without
                , enum
+               , doParse
                , lexeme
                , parens
                , positiveNatural
+               , positiveNatural'
                , parseInt
                , postfix
                , prefix
                , splitOn
                , splitPer
-               , symbol ) where
+               , symbol
+               , sym
+               , optSpaces) where
 
 import Paths_advent_of_code (getDataFileName)
 import System.Environment (getArgs)
@@ -28,6 +33,7 @@ import Data.Functor.Identity (Identity)
 import Text.Parsec.Expr (Operator (..), Assoc)
 import qualified Text.Parsec.Token as P
 import qualified Text.Parsec.Language as L
+import GHC.Natural
 
 splitAtEmpty :: [String] -> [[String]]
 splitAtEmpty l = case break (== "") l of
@@ -89,9 +95,16 @@ enum :: (Bounded a, Enum a) => [a]
 enum = enumFromTo minBound maxBound
 
 -- parsing utilities
+type Parser = Parsec String ()
+
+doParse :: Parser x -> String -> Either ParseError x
+doParse = flip parse ""
 
 positiveNatural :: Stream s m Char => ParsecT s u m Int
 positiveNatural = foldl' (\a i -> a * 10 + digitToInt i) 0 <$> many1 digit
+
+positiveNatural' :: Stream s m Char => ParsecT s u m Natural
+positiveNatural' = foldl' (\a i -> a * 10 + (fromIntegral . digitToInt $ i)) 0 <$> many1 digit
 
 parseInt :: Stream s m Char => ParsecT s u m Int
 parseInt = ($) <$> id `option` (negate <$ char '-') <*> positiveNatural
@@ -122,3 +135,9 @@ postfix name fun = Postfix (do { reservedOp name; return fun })
 
 parens :: Parsec String u a -> Parsec String u a
 parens = P.parens lexer
+
+sym :: String -> Parsec String u String
+sym = optSpaces . string
+
+optSpaces :: Parsec String u a -> Parsec String u a
+optSpaces p = p <* many (char ' ')

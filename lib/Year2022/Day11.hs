@@ -6,9 +6,6 @@ import Control.Arrow ((***))
 import Helpers
 import Text.Parsec
 import Text.Parsec.Expr (buildExpressionParser, Assoc (AssocLeft))
-import Control.Applicative (liftA2)
-
-type Parser = Parsec String ()
 
 type Item  = Int
 type Id    = Int
