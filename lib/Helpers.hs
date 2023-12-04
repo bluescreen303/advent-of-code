@@ -8,6 +8,7 @@ module Helpers ( Parser
                , mergeAll
                , without
                , enum
+               , withSecondLine
                , doParse
                , lexeme
                , parens
@@ -93,6 +94,10 @@ without xxs@(x:xs) yys@(y:ys) = case x `compare` y of
 
 enum :: (Bounded a, Enum a) => [a]
 enum = enumFromTo minBound maxBound
+
+withSecondLine :: (a -> a) -> [a] -> [a]
+withSecondLine fn (first:second:rest) = first : fn second : rest
+withSecondLine _  _                   = error "withSecondLine called without second line"
 
 -- parsing utilities
 type Parser = Parsec String ()
