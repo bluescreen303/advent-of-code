@@ -9,6 +9,8 @@ module Helpers ( Parser
                , without
                , enum
                , withSecondLine
+               , mapRSet
+               , lowestInRange
                , doParse
                , lexeme
                , parens
@@ -35,6 +37,7 @@ import Text.Parsec.Expr (Operator (..), Assoc)
 import qualified Text.Parsec.Token as P
 import qualified Text.Parsec.Language as L
 import GHC.Natural
+import Data.Ranged (RSet (rSetRanges), Range (..), DiscreteOrdered, Boundary (..), makeRangedSet)
 
 splitAtEmpty :: [String] -> [[String]]
 splitAtEmpty l = case break (== "") l of
@@ -98,6 +101,22 @@ enum = enumFromTo minBound maxBound
 withSecondLine :: (a -> a) -> [a] -> [a]
 withSecondLine fn (first:second:rest) = first : fn second : rest
 withSecondLine _  _                   = error "withSecondLine called without second line"
+
+-- Range extensions
+
+-- Ranges and RSets are not Functors and come without fmap equivalent
+mapRSet :: (DiscreteOrdered a, DiscreteOrdered b) => (a -> b) -> RSet a -> RSet b
+mapRSet op = makeRangedSet . map mapRange . rSetRanges
+  where mapRange (Range l u) = Range (mapBoundary l) (mapBoundary u)
+        mapBoundary (BoundaryAbove x) = BoundaryAbove (op x)
+        mapBoundary (BoundaryBelow x) = BoundaryBelow (op x)
+        mapBoundary BoundaryAboveAll  = BoundaryAboveAll
+        mapBoundary BoundaryBelowAll  = BoundaryBelowAll
+
+lowestInRange :: Ord v => Range v -> v
+lowestInRange x = case rangeLower x of
+                    (BoundaryBelow n) -> n
+                    _                 -> error "unsupported Range structure"
 
 -- parsing utilities
 type Parser = Parsec String ()

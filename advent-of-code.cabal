@@ -52,6 +52,7 @@ library
         Year2023.Day02
         Year2023.Day03
         Year2023.Day04
+        Year2023.Day05
     build-depends:
         parsec ^>=3.1.15.0,
         mtl >= 2.2 && < 2.4,
@@ -60,6 +61,7 @@ library
         vector ^>= 0.13.0.0,
         containers ^>= 0.6.5.1,
         parallel ^>= 3.2.2.0,
+        Ranged-sets ^>= 0.4.0,
     -- Modules included in this library but not exported.
     other-modules:
         Sized
@@ -243,6 +245,15 @@ executable 2023-04
 
     hs-source-dirs:   app/2023
     main-is:          04.hs
+
+    build-depends:
+        advent-of-code
+
+executable 2023-05
+    import:           commons
+
+    hs-source-dirs:   app/2023
+    main-is:          05.hs
 
     build-depends:
         advent-of-code
