@@ -7,12 +7,16 @@ import Data.Char (digitToInt)
 import Data.List (foldl')
 
 main :: Bool -> String -> Either ParseError Int
-main False = fmap (product . map (length . uncurry winningStrategies)) . doParse parser1
-main True  = fmap                (length . uncurry winningStrategies)  . doParse parser2
+main False = fmap (product . map ((\(x, y) -> y + 1 - x) . uncurry solve)) . doParse parser1
+main True  = fmap                ((\(x, y) -> y + 1 - x) . uncurry solve)  . doParse parser2
 
-winningStrategies :: Int -> Int -> [(Int, Int)]
-winningStrategies timeLimit record  = filter ((> record) . snd) . map (\x -> (x, go x)) $ [0..timeLimit]
-  where go buttonHeld = (timeLimit - buttonHeld) * buttonHeld
+solve :: Int -> Int -> (Int, Int)
+solve time record = ( floor   ((-d + t) / 2) + 1
+                    , ceiling (( d + t) / 2) - 1 )
+  where d, t, r :: Double
+        d = sqrt $ t ^ (2 :: Int) - 4 * r
+        t = fromIntegral time
+        r = fromIntegral record
 
 parser1 :: Parser [(Int, Int)]
 parser1 = zip <$> times    <* endOfLine
