@@ -58,10 +58,8 @@ library
         parsec ^>=3.1.15.0,
         mtl >= 2.2 && < 2.4,
         comonad ^>= 5.0,
-        ghc-prim >= 0.9 && < 0.11,
         vector ^>= 0.13.0.0,
         containers ^>= 0.6.5.1,
-        parallel ^>= 3.2.2.0,
         Ranged-sets ^>= 0.4.0,
     -- Modules included in this library but not exported.
     other-modules:
@@ -73,7 +71,7 @@ executable 2022-01
     import:           commons
 
     hs-source-dirs:   app/2022
-    main-is:          2022-01.hs
+    main-is:          01.hs
 
     build-depends:
         advent-of-code
@@ -82,7 +80,7 @@ executable 2022-02
     import:           commons
 
     hs-source-dirs:   app/2022
-    main-is:          2022-02.hs
+    main-is:          02.hs
 
     build-depends:
         advent-of-code
@@ -91,7 +89,7 @@ executable 2022-03
     import:           commons
 
     hs-source-dirs:   app/2022
-    main-is:          2022-03.hs
+    main-is:          03.hs
 
     build-depends:
         advent-of-code
@@ -100,7 +98,7 @@ executable 2022-04
     import:           commons
 
     hs-source-dirs:   app/2022
-    main-is:          2022-04.hs
+    main-is:          04.hs
 
     build-depends:
         advent-of-code
@@ -109,7 +107,7 @@ executable 2022-05
     import:           commons
 
     hs-source-dirs:   app/2022
-    main-is:          2022-05.hs
+    main-is:          05.hs
 
     build-depends:
         advent-of-code
@@ -118,7 +116,7 @@ executable 2022-06
     import:           commons
 
     hs-source-dirs:   app/2022
-    main-is:          2022-06.hs
+    main-is:          06.hs
 
     build-depends:
         advent-of-code
@@ -127,7 +125,7 @@ executable 2022-07
     import:           commons
 
     hs-source-dirs:   app/2022
-    main-is:          2022-07.hs
+    main-is:          07.hs
 
     build-depends:
         advent-of-code
@@ -136,7 +134,7 @@ executable 2022-08
     import:           commons
 
     hs-source-dirs:   app/2022
-    main-is:          2022-08.hs
+    main-is:          08.hs
 
     build-depends:
         advent-of-code
@@ -145,7 +143,7 @@ executable 2022-09
     import:           commons
 
     hs-source-dirs:   app/2022
-    main-is:          2022-09.hs
+    main-is:          09.hs
 
     build-depends:
         advent-of-code
@@ -154,7 +152,7 @@ executable 2022-10
     import:           commons
 
     hs-source-dirs:   app/2022
-    main-is:          2022-10.hs
+    main-is:          10.hs
 
     build-depends:
         advent-of-code
@@ -163,7 +161,7 @@ executable 2022-11
     import:           commons
 
     hs-source-dirs:   app/2022
-    main-is:          2022-11.hs
+    main-is:          11.hs
 
     build-depends:
         advent-of-code
@@ -172,7 +170,7 @@ executable 2022-12
     import:           commons
 
     hs-source-dirs:   app/2022
-    main-is:          2022-12.hs
+    main-is:          12.hs
 
     build-depends:
         advent-of-code
@@ -181,7 +179,7 @@ executable 2022-13
     import:           commons
 
     hs-source-dirs:   app/2022
-    main-is:          2022-13.hs
+    main-is:          13.hs
 
     build-depends:
         advent-of-code
@@ -190,7 +188,7 @@ executable 2022-14
     import:           commons
 
     hs-source-dirs:   app/2022
-    main-is:          2022-14.hs
+    main-is:          14.hs
 
     build-depends:
         advent-of-code
@@ -199,7 +197,7 @@ executable 2022-15
     import:           commons
 
     hs-source-dirs:   app/2022
-    main-is:          2022-15.hs
+    main-is:          15.hs
 
     build-depends:
         advent-of-code
@@ -209,7 +207,7 @@ executable 2022-16
     ghc-options:      -threaded
 
     hs-source-dirs:   app/2022
-    main-is:          2022-16.hs
+    main-is:          16.hs
 
     build-depends:
         advent-of-code
@@ -290,3 +288,7 @@ test-suite advent-of-code-2023
     build-depends:
         advent-of-code,
         hspec >= 2.9.7 && < 2.11,
+
+    other-modules:
+        Year2023.Tests.Day01
+        Year2023.Tests.Day02

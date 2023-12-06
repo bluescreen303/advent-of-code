@@ -11,6 +11,7 @@ module Helpers ( Parser
                , withSecondLine
                , mapRSet
                , lowestInRange
+               , getDataFileName
                , doParse
                , lexeme
                , parens
@@ -25,7 +26,7 @@ module Helpers ( Parser
                , sym
                , optSpaces) where
 
-import Paths_advent_of_code (getDataFileName)
+import qualified Paths_advent_of_code (getDataFileName)
 import System.Environment (getArgs)
 import System.FilePath (joinPath)
 import Text.Parsec
@@ -55,7 +56,7 @@ argOr' skip year dataFileName = do
     (otherArgs, fileArgs) <- splitAt skip <$> getArgs
     case fileArgs of
         [f] -> return (f, otherArgs)
-        _   -> (,otherArgs) <$> getDataFileName (joinPath [show year, dataFileName])
+        _   -> (,otherArgs) <$> getDataFileName year dataFileName
 
 splitOn :: Eq a => a -> [a] -> [[a]]
 splitOn n xs = case break (== n) xs of
@@ -117,6 +118,12 @@ lowestInRange :: Ord v => Range v -> v
 lowestInRange x = case rangeLower x of
                     (BoundaryBelow n) -> n
                     _                 -> error "unsupported Range structure"
+
+--
+
+getDataFileName :: Int -> FilePath -> IO FilePath
+getDataFileName year x = Paths_advent_of_code.getDataFileName $ joinPath [show year, x]
+
 
 -- parsing utilities
 type Parser = Parsec String ()
