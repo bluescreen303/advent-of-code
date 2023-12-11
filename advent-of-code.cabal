@@ -57,6 +57,7 @@ library
         Year2023.Day07
         Year2023.Day08
         Year2023.Day09
+        Year2023.Day11
     build-depends:
         parsec ^>=3.1.15.0,
         mtl >= 2.2 && < 2.4,
@@ -292,6 +293,15 @@ executable 2023-09
 
     hs-source-dirs:   app/2023
     main-is:          09.hs
+
+    build-depends:
+        advent-of-code
+
+executable 2023-11
+    import:           commons
+
+    hs-source-dirs:   app/2023
+    main-is:          11.hs
 
     build-depends:
         advent-of-code
