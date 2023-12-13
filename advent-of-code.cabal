@@ -58,6 +58,7 @@ library
         Year2023.Day08
         Year2023.Day09
         Year2023.Day11
+        Year2023.Day12
         Year2023.Day13
         Year2023.Day14
         Year2023.Day15
@@ -307,6 +308,15 @@ executable 2023-11
 
     hs-source-dirs:   app/2023
     main-is:          11.hs
+
+    build-depends:
+        advent-of-code
+
+executable 2023-12
+    import:           commons
+
+    hs-source-dirs:   app/2023
+    main-is:          12.hs
 
     build-depends:
         advent-of-code
