@@ -40,13 +40,8 @@ import qualified Text.Parsec.Language as L
 import GHC.Natural
 import Data.Ranged (RSet (rSetRanges), Range (..), DiscreteOrdered, Boundary (..), makeRangedSet)
 
-splitAtEmpty :: [String] -> [[String]]
-splitAtEmpty l = case break (== "") l of
-                     (items, "":rest) -> items : splitAtEmpty rest
-                     (items, _)       -> [items]
-
 grouped :: String -> [(Integer, [String])]
-grouped = zip [0..] . splitAtEmpty . lines
+grouped = zip [0..] . splitOn "" . lines
 
 argOr :: Int -> FilePath -> IO String
 argOr year = fmap fst . argOr' 0 year
