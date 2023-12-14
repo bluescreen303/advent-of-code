@@ -1,5 +1,6 @@
-{ mkDerivation, base, comonad, containers, filepath, hspec, lib
-, mtl, parsec, Ranged-sets, vector
+{ mkDerivation, base, comonad, containers, filepath, hashable
+, hspec, lib, mtl, parsec, Ranged-sets, unordered-containers
+, vector
 }:
 mkDerivation {
   pname = "advent-of-code";
@@ -9,7 +10,8 @@ mkDerivation {
   isExecutable = true;
   enableSeparateDataOutput = true;
   libraryHaskellDepends = [
-    base comonad containers filepath mtl parsec Ranged-sets vector
+    base comonad containers filepath hashable mtl parsec Ranged-sets
+    unordered-containers vector
   ];
   executableHaskellDepends = [ base filepath ];
   testHaskellDepends = [ base containers filepath hspec ];

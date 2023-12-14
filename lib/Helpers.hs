@@ -22,23 +22,28 @@ module Helpers ( Parser
                , prefix
                , splitOn
                , splitPer
+               , takeWithLoopDetection
                , symbol
                , sym
                , optSpaces) where
 
 import qualified Paths_advent_of_code (getDataFileName)
+import Data.Bifunctor (bimap)
+import Data.Char (digitToInt)
+import Data.List (foldl', scanl', find)
+import Data.Maybe (fromJust, isJust)
 import System.Environment (getArgs)
 import System.FilePath (joinPath)
-import Text.Parsec
-import Data.List (foldl')
-import Data.Char (digitToInt)
 
 import Data.Functor.Identity (Identity)
+import Data.Hashable (Hashable)
+import qualified Data.HashMap.Strict as HashMap
+import Data.Ranged (RSet (rSetRanges), Range (..), DiscreteOrdered, Boundary (..), makeRangedSet)
+import GHC.Natural
+import Text.Parsec
 import Text.Parsec.Expr (Operator (..), Assoc)
 import qualified Text.Parsec.Token as P
 import qualified Text.Parsec.Language as L
-import GHC.Natural
-import Data.Ranged (RSet (rSetRanges), Range (..), DiscreteOrdered, Boundary (..), makeRangedSet)
 
 grouped :: String -> [(Integer, [String])]
 grouped = zip [0..] . splitOn "" . lines
@@ -63,6 +68,23 @@ splitPer n xs = let (this, that) = splitAt n xs
                 in this : case that of
                             [] -> []
                             _  -> splitPer n that
+
+takeWithLoopDetection :: forall a. Hashable a => Int -> [a] -> a
+takeWithLoopDetection n input = snd . fst $ (previous !! n')
+  where numbered :: [(Int, a)]
+        numbered = zip [0..] input
+
+        previous :: [((Int, a),Maybe Int)]
+        previous = zip numbered
+                 . tail
+                 . map snd
+                 . scanl' (\(m, _) (i, value) ->
+                              (HashMap.insert value i m, HashMap.lookup value m))
+                          (HashMap.empty, Nothing)
+                 $ numbered
+
+        n' = let (end, start) = bimap fst fromJust . fromJust . find (isJust . snd) $ previous
+             in ((n - start) `mod` (end - start)) + start
 
 divisible :: Integral a => a -> a -> Bool
 divisible x y = x `mod` y == 0
