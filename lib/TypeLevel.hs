@@ -44,6 +44,9 @@ data Some c where
 instance TestEquality c => Eq (Some c) where
     (Some l) == (Some r) = isJust $ testEquality l r
 
+deriving instance (forall t. Show (c t)) => Show (Some c)
+
+
 data Some2 c u where
     Some2 :: c t u -> Some2 c u
 

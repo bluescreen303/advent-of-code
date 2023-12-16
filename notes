@@ -1,1 +1,3 @@
 cabal configure --enable-profiling --profiling-detail=all-functions
+# cabal run foo -- +RTS -p
+# cabal run foo -- +RTS -hc -l
