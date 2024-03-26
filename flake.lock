@@ -15,11 +15,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1698485658,
-        "narHash": "sha256-CRErvCH0TfEsE0Uq9VhecvrbnnLeiRnDV6F52cs40Zk=",
+        "lastModified": 1702706466,
+        "narHash": "sha256-JNPDPWTAxvAkkFqNmKwRq1lDbJc95xq+V90etGO4c0c=",
         "ref": "refs/heads/master",
-        "rev": "be3a1ee937cc2455dc93768dd08c0926d969bab3",
-        "revCount": 47,
+        "rev": "6aaeb499c0336ccaa33ec5dff4eefb5b0bd2f054",
+        "revCount": 66,
         "type": "git",
         "url": "http://mathijs@git.lan/advent-of-code"
       },
@@ -50,11 +50,10 @@
         "thinking-with-types": "thinking-with-types"
       },
       "locked": {
-        "lastModified": 1701639834,
-        "narHash": "sha256-ErlcIHMNGz5wcjGRF4oDfuZkx9vuUOFneHkFPHEs9Ls=",
-        "ref": "refs/heads/master",
-        "rev": "6fbc650c4169c864e39cd1f6019b55ccc2ffc55b",
-        "revCount": 638,
+        "lastModified": 1711397643,
+        "narHash": "sha256-0PFR6QT88cnTjPodd1RipiWGD8vthkyHB2yvbmIE1tY=",
+        "rev": "c3f400ba12f3274b418b9b9287e7e74596bd5d3f",
+        "revCount": 668,
         "type": "git",
         "url": "http://mathijs@git.lan/bluenix"
       },
@@ -140,11 +139,11 @@
         "systems": "systems"
       },
       "locked": {
-        "lastModified": 1694529238,
-        "narHash": "sha256-zsNZZGTGnMOf9YpHKJqMSsa0dXbfmxeoJ7xHlrt+xmY=",
+        "lastModified": 1710146030,
+        "narHash": "sha256-SZ5L6eA7HJ/nmkzGG7/ISclqe6oZdOZTNoesiInkXPQ=",
         "owner": "numtide",
         "repo": "flake-utils",
-        "rev": "ff7b65b44d01cf9ba6a71320833626af21126384",
+        "rev": "b1d9ab70662946ef0850d488da1c9019f3a9752a",
         "type": "github"
       },
       "original": {
@@ -161,11 +160,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1696013706,
-        "narHash": "sha256-cXzmzl9ByHh5X23r4LhMkD+yIv1IHMSWgYCS6JCzbYI=",
+        "lastModified": 1700510193,
+        "narHash": "sha256-LI+eejN1cT+O4RTYtxMxntUT7r8RZkUJsaLKuAl4xoM=",
         "ref": "refs/heads/master",
-        "rev": "c147b0f182ac7eae318a6e278e564c5bbb7663b0",
-        "revCount": 28,
+        "rev": "6aa340ab045fc2b687e726c1402786da7b5f8a94",
+        "revCount": 30,
         "type": "git",
         "url": "http://mathijs@git.lan/git-svc"
       },
@@ -187,11 +186,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1701337770,
-        "narHash": "sha256-f9fGlcnYcmIDMTg4Var9/dvxNtczmFgWp0tDebGcJp4=",
+        "lastModified": 1710519878,
+        "narHash": "sha256-0dbc10OBFUVYyXC+C+N6vRUd8xyBSRxkcZ4Egipbx0M=",
         "owner": "nix-community",
         "repo": "NixOS-WSL",
-        "rev": "c9d56ccb79ca47d42d3bf66faf6227411a5b01e6",
+        "rev": "aef95bdb6800a3a2af7aa7083d6df03067da6592",
         "type": "github"
       },
       "original": {
@@ -202,11 +201,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1701253981,
-        "narHash": "sha256-ztaDIyZ7HrTAfEEUt9AtTDNoCYxUdSd6NrRHaYOIxtk=",
+        "lastModified": 1711163522,
+        "narHash": "sha256-YN/Ciidm+A0fmJPWlHBGvVkcarYWSC+s3NTPk/P+q3c=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "e92039b55bcd58469325ded85d4f58dd5a4eaf58",
+        "rev": "44d0940ea560dee511026a53f0e2e2cde489b4d4",
         "type": "github"
       },
       "original": {
@@ -235,11 +234,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1659043242,
-        "narHash": "sha256-G35JTvYlboXwxs8oo0+0YsQFE8euiBcATM8XcTe0ROw=",
+        "lastModified": 1700510887,
+        "narHash": "sha256-itgl97DRkE6h2ffelxdHiSJE/ctCvwRL89rRS8MGktE=",
         "ref": "refs/heads/master",
-        "rev": "232566f7ff63100f4b8074c2cfe3aace8ed82955",
-        "revCount": 12,
+        "rev": "cc1fb4fe1714b7ac1b57f81df4327a1820638bbf",
+        "revCount": 13,
         "type": "git",
         "url": "http://mathijs@git.lan/pgp2neo"
       },
@@ -263,11 +262,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1698514633,
-        "narHash": "sha256-99zr051opLNpg2JO/ueFeMSFnVqYPPT8R1kLYlXXFi4=",
+        "lastModified": 1706560193,
+        "narHash": "sha256-qbLiCnQeNbUiXTQbm6U/D/k0bepxnXYP54qTobAg1Kk=",
         "ref": "refs/heads/master",
-        "rev": "b040cb831b58e4726dcef8951c7a0aed270eff37",
-        "revCount": 18,
+        "rev": "a578dc9395ae06daa1b0520770098e2e63e01c08",
+        "revCount": 27,
         "type": "git",
         "url": "http://mathijs@git.lan/plfa"
       },
@@ -295,11 +294,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1698631970,
-        "narHash": "sha256-uO+iqGslP1TdH0q3pMkpo6XHtzoEa6bjjF3dEQJSDcc=",
+        "lastModified": 1711332768,
+        "narHash": "sha256-SFnlIwnrwJxEawLcrH7+zGb8spePcYyai5asMZnm0BM=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "44210df7a70dcf0a81a5919f9422b6ae589ee673",
+        "rev": "8a8e3ea9a9a4b2225cb5e33e07c3a337f820168c",
         "type": "github"
       },
       "original": {
@@ -426,11 +425,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1698514712,
-        "narHash": "sha256-eHb85og3Uursl3bN7XvKfThHpTBzDJHu6F98i0uVipc=",
+        "lastModified": 1704479935,
+        "narHash": "sha256-jTGLnJ9+sFjo9CeiajEYwzTn+EJ5pnCyeUglzWi+jCU=",
         "ref": "refs/heads/master",
-        "rev": "e95f320db9c5dcc35c8fd3008b70181f127036fd",
-        "revCount": 44,
+        "rev": "2121a5717516709c99fe2e7fb3eb264c8c454ac1",
+        "revCount": 46,
         "type": "git",
         "url": "http://mathijs@git.lan/thinking-with-types"
       },
