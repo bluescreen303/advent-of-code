@@ -1,9 +1,0 @@
-#!/bin/sh
-set -eu
-
-n=$1
-
-cp app/2023/06.hs app/2023/$n.hs && \
-    cp lib/Year2023/Day06.hs lib/Year2023/Day$n.hs && \
-    cp data/2023/06-example.txt data/2023/$n-example.txt
-    # cp test/Year2023/Tests/Day06.hs test/Year2023/Tests/Day$n.hs && \
