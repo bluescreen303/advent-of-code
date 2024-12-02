@@ -2,8 +2,8 @@
 
 def parse:
   split("\n")
-  | map( select(. != "")
-       | split("\\s+"; "")
+  | map( select(. != "")   # drop empty line
+       | split("\\s+"; "") # split by 1 or more whitespace
        | map(tonumber)
        )
 ;

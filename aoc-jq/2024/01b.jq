@@ -2,19 +2,19 @@
 
 def parse:
   split("\n")
-  | map( select(. != "")
-       | split("\\s+"; "")
+  | map( select(. != "")   # drop empty line
+       | split("\\s+"; "") # split by 1 or more whitespace
        | map(tonumber)
        )
 ;
 
 parse
 | transpose
-| .[1] as $right
+| ( .[1]
+  | group_by(.)
+  | map({key: .[0] | tostring, value: length})
+  | from_entries
+  ) as $right
 | .[0]
-| map( . as $me
-     | $right | map(select(. == $me))
-              | length
-              * $me
-     )
+| map(. * ($right[tostring] // 0))
 | add
