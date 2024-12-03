@@ -1,7 +1,7 @@
-use aoc_rs::year_2024::parse01;
+use aoc_rs::year_2024::day_01::parse;
 
 fn main() -> anyhow::Result<()> {
-    let (mut l, mut r) = parse01()?;
+    let (mut l, mut r) = parse()?;
 
     l.sort();
     r.sort();

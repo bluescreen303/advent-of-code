@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 
-use aoc_rs::year_2024::parse01;
+use aoc_rs::year_2024::day_01::parse;
 
 fn main() -> anyhow::Result<()> {
-    let (l, r) = parse01()?;
+    let (l, r) = parse()?;
 
     let mut counted = HashMap::new();
     for x in r {
