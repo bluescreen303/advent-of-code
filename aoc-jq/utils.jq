@@ -47,3 +47,33 @@ def break_when(pred):
   ;
   go
 ;
+
+def diagonal($b):
+    .[0] as $e | .[1:] as $es
+  | ($b | map(.[1:]))  as $ts
+  | [$b | map(.[0])]
+    + if $e == null
+      then $ts | transpose | map(map(select(. != null)))
+      else $es | diagonal([$e] + $ts)
+      end
+;
+
+def diagonal: # '/'
+  diagonal([])[1:]
+;
+
+def diagonal2:    # '\'
+  map(reverse) | diagonal | map(reverse)
+;
+
+def toposort($root; $edges):
+  def go($node; $visited):
+    reduce ($edges[$node | tostring] // [])[] as $child
+      ( {$visited, result: []}
+      ; if (.visited | any(. == $child)) then .
+        else (.visited, .result) += go($child; .visited + [$child])
+        end
+      ).result + [$node]
+  ;
+  go($root; [$root]) | reverse
+;

@@ -16,5 +16,15 @@ def step($x):
   end
 ;
 
-[match("mul\\(([0-9]+),([0-9]+)\\)|do\\(\\)|don't\\(\\)"; "gm")]
-| reduce .[] as $x ({capturing: true, sum: 0}; step($x)).sum
+# puzzle a
+( [ match("mul\\(([0-9]+),([0-9]+)\\)"; "gm")
+  | one_mul
+  ] | add
+),
+# puzzle b
+( [match("mul\\(([0-9]+),([0-9]+)\\)|do\\(\\)|don't\\(\\)"; "gm")]
+  | reduce .[] as $x
+    ( {capturing: true, sum: 0}
+    ; step($x)
+    ).sum
+)

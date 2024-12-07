@@ -1,11 +1,11 @@
 #!/usr/bin/env -S jaq -Rsf
 
 def parse:
-  split("\n")
-  | map( select(. != "")   # drop empty line
-       | split("\\s+"; "") # split by 1 or more whitespace
-       | map(tonumber)
-       )
+  split("\n")[]
+  | select(. != "")           # drop empty line
+  | [ split("\\s+"; "")[]     # split by 1 or more whitespace
+    | tonumber
+    ]
 ;
 
 def safe:
@@ -26,6 +26,7 @@ def correct_one:
   | any(safe)
 ;
 
-parse
-| map(select(correct_one))
-| length
+[parse] |
+(map(select(safe)) | length)
+,
+(map(select(correct_one)) | length)
