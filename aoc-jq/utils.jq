@@ -70,8 +70,8 @@ def toposort($root; $edges):
   def go($node; $visited):
     reduce ($edges[$node | tostring] // [])[] as $child
       ( {$visited, result: []}
-      ; if (.visited | any(. == $child)) then .
-        else (.visited, .result) += go($child; .visited + [$child])
+      ; if (.visited | any(. == $child)) | not then
+          (.visited, .result) += go($child; .visited + [$child])
         end
       ).result + [$node]
   ;
