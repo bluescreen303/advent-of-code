@@ -77,3 +77,11 @@ def toposort($root; $edges):
   ;
   go($root; [$root]) | reverse
 ;
+
+def min($x; $y):
+  if $y < $x then $y else $x end
+;
+
+def max($x; $y):
+  if $x > $y then $x else $y end
+;
