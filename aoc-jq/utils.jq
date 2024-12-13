@@ -85,3 +85,7 @@ def min($x; $y):
 def max($x; $y):
   if $x > $y then $x else $y end
 ;
+
+def as_int:
+  select(. == (. | floor)) | floor
+;
