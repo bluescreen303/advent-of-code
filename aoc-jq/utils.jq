@@ -89,3 +89,7 @@ def max($x; $y):
 def as_int:
   select(. == (. | floor)) | floor
 ;
+
+def drop_leading_0s:
+  sub("0*(?<x>[0-9])";"\(.x)")
+;
