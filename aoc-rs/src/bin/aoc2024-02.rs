@@ -43,7 +43,7 @@ fn main() -> anyhow::Result<()> {
                 new_x
             })
         })
-        .filter_map(|mut xs| xs.any(|x| is_safe2(&x)).then(|| ()))
+        .filter_map(|mut xs| xs.any(|x| is_safe2(&x)).then_some(()))
         .count();
 
     Ok(println!("{}\n{}", puzzle_a, puzzle_b))
