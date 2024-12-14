@@ -96,6 +96,5 @@ def drop_leading_0s:
 
 # stupid languages don't have 'quot' and 'rem', they only have 'div' and 'mod'
 def rem($y):
-  . % $y
-  | (if . < 0 then . + $y end)
+  ((. % $y) + $y) % $y
 ;
