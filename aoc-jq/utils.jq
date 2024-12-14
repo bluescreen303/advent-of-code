@@ -93,3 +93,9 @@ def as_int:
 def drop_leading_0s:
   sub("0*(?<x>[0-9])";"\(.x)")
 ;
+
+# stupid languages don't have 'quot' and 'rem', they only have 'div' and 'mod'
+def rem($y):
+  . % $y
+  | (if . < 0 then . + $y end)
+;
