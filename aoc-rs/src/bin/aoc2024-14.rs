@@ -3,8 +3,9 @@ use aoc_rs::ParseFrom;
 use regex::Regex;
 use std::{
     collections::{HashMap, HashSet},
-    error::Error,
     io,
+    str::FromStr,
+    sync::LazyLock,
     time::Duration,
 };
 
@@ -55,6 +56,26 @@ impl Robot {
     }
 }
 
+static ROBOT_RE: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"p=([0-9]+),([0-9]+) v=([-0-9]+),([-0-9]+)").unwrap());
+
+impl FromStr for Robot {
+    type Err = anyhow::Error;
+
+    fn from_str(line: &str) -> Result<Self, Self::Err> {
+        let (_, [px, py, vx, vy]) = ROBOT_RE
+            .captures(line)
+            .ok_or(anyhow!("could not parse line"))?
+            .extract();
+        Ok(Robot {
+            px: px.parse()?,
+            py: py.parse()?,
+            vx: vx.parse()?,
+            vy: vy.parse()?,
+        })
+    }
+}
+
 #[derive(Clone)]
 struct PlayingField(Vec<Robot>);
 
@@ -80,33 +101,14 @@ impl PlayingField {
         }
         quadrants
     }
-}
 
-impl ParseFrom for PlayingField {
     fn parse_from_lines<B, E>(source: B) -> anyhow::Result<Self>
     where
         B: Iterator<Item = Result<String, E>>,
-        E: Error + Send + Sync + 'static,
         Self: Sized,
+        anyhow::Error: From<E>,
     {
-        let re = Regex::new(r"p=([0-9]+),([0-9]+) v=([-0-9]+),([-0-9]+)").unwrap();
-        let q = source
-            .map(|line| {
-                let line = line?;
-                let (_, [px, py, vx, vy]) = re
-                    .captures(&line)
-                    .ok_or(anyhow!("could not parse line"))?
-                    .extract();
-                Ok(Robot {
-                    px: px.parse()?,
-                    py: py.parse()?,
-                    vx: vx.parse()?,
-                    vy: vy.parse()?,
-                })
-            })
-            .collect::<anyhow::Result<Vec<_>>>()
-            .map(PlayingField);
-        q
+        Robot::parse_from_lines(source).map(Self)
     }
 }
 
